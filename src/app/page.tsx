@@ -187,7 +187,7 @@ const LandingPage = () => {
                     </div>
                     <div>
                         <h3 className="text-3xl font-bold font-headline">Sumit Madde</h3>
-                        <p className="text-primary font-semibold mt-1">Developer & Idea Seeder</p>
+                        <p className="text-primary font-semibold mt-1">Turning Code &amp; Curiosity Into Real-World Solutions</p>
                         <p className="mt-4 text-muted-foreground">
                             I'm a passionate third-year engineering student with a deep interest in both technology and finance. Driven by the desire to build solutions that solve real-world problems, I created NiveshSikho360 to simplify and demystify the stock market for young Indians. My love for innovation and commitment to financial literacy are at the core of everything I do.
                         </p>
