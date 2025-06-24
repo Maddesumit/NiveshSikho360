@@ -144,7 +144,7 @@ const LandingPage = () => {
                 <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-8 md:gap-12 bg-card/50 p-8 rounded-lg shadow-lg">
                     <div className="flex-shrink-0">
                         <Image
-                            src="/founder.png"
+                            src="/founder.jpg"
                             alt="Sumit Madde, Founder of NiveshSikho360"
                             width={256}
                             height={256}
