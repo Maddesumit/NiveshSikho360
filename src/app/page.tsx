@@ -2,6 +2,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { NiveshSikho360Icon } from '@/components/icons';
 import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper } from 'lucide-react';
@@ -133,6 +134,35 @@ const LandingPage = () => {
                 </p>
             </div>
         </section>
+
+        <section className="py-20 md:py-28 bg-background">
+            <div className="container max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Meet the Founder</h2>
+                    <p className="mt-4 text-muted-foreground">The mind behind the mission.</p>
+                </div>
+                <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-8 md:gap-12 bg-card/50 p-8 rounded-lg shadow-lg">
+                    <div className="flex-shrink-0">
+                        <Image
+                            src="https://placehold.co/256x256.png"
+                            alt="Sumit Madde, Founder of NiveshSikho360"
+                            width={256}
+                            height={256}
+                            className="rounded-full object-cover border-4 border-primary/50"
+                            data-ai-hint="portrait man"
+                        />
+                    </div>
+                    <div>
+                        <h3 className="text-3xl font-bold font-headline">Sumit Madde</h3>
+                        <p className="text-primary font-semibold mt-1">Founder & Idea Seeder</p>
+                        <p className="mt-4 text-muted-foreground">
+                            Sumit is a passionate 3rd-year engineering student with a deep-seated enthusiasm for technology and finance. Driven by a desire to build innovative solutions that solve real-world problems, he envisioned NiveshSikho360 as a platform to demystify the stock market for young Indians. His excitement for creating new things and his commitment to financial literacy are the cornerstones of this project.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
          <section className="py-20 md:py-28">
             <div className="container text-center">
