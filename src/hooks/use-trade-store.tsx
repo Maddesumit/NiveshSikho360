@@ -10,7 +10,7 @@ type Holding = {
   avgPrice: number;
 };
 
-type TradeState = {
+type NiveshState = {
   cash: number;
   holdings: Holding[];
 };
@@ -19,12 +19,12 @@ type Action =
   | { type: "BUY"; payload: { stock: Stock; quantity: number } }
   | { type: "SELL"; payload: { stock: Stock; quantity: number } };
 
-const initialState: TradeState = {
+const initialState: NiveshState = {
   cash: 100000,
   holdings: [],
 };
 
-const tradeReducer = (state: TradeState, action: Action): TradeState => {
+const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
   switch (action.type) {
     case "BUY": {
       const { stock, quantity } = action.payload;
@@ -103,17 +103,17 @@ const tradeReducer = (state: TradeState, action: Action): TradeState => {
   }
 };
 
-type TradeContextType = {
-  state: TradeState;
+type NiveshContextType = {
+  state: NiveshState;
   dispatch: React.Dispatch<Action>;
   getHolding: (symbol: string) => Holding | undefined;
   getStockPrice: (symbol: string) => number;
 };
 
-const TradeContext = createContext<TradeContextType | undefined>(undefined);
+const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
-export const TradeProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(tradeReducer, initialState);
+export const NiveshProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useReducer(niveshReducer, initialState);
 
   const getHolding = useCallback((symbol: string) => {
     return state.holdings.find(h => h.stock.symbol === symbol);
@@ -126,16 +126,16 @@ export const TradeProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <TradeContext.Provider value={{ state, dispatch, getHolding, getStockPrice }}>
+    <NiveshContext.Provider value={{ state, dispatch, getHolding, getStockPrice }}>
       {children}
-    </TradeContext.Provider>
+    </NiveshContext.Provider>
   );
 };
 
-export const useTradeStore = () => {
-  const context = useContext(TradeContext);
+export const useNiveshStore = () => {
+  const context = useContext(NiveshContext);
   if (context === undefined) {
-    throw new Error("useTradeStore must be used within a TradeProvider");
+    throw new Error("useNiveshStore must be used within a NiveshProvider");
   }
   return context;
 };

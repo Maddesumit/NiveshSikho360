@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TradeVastuIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const NiveshSitu360Icon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -11,9 +11,8 @@ export const TradeVastuIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-    <path d="M21 18h-18" />
-    <path d="M12 12V2" />
-    <path d="M7 7l5 5 5-5" />
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16V8" />
+    <path d="m15 11-3-3-3 3" />
   </svg>
 );

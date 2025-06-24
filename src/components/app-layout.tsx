@@ -22,13 +22,13 @@ import {
   Wallet,
   Github,
 } from "lucide-react";
-import { TradeVastuIcon } from "@/components/icons";
-import { useTradeStore } from "@/hooks/use-trade-store";
+import { NiveshSitu360Icon } from "@/components/icons";
+import { useNiveshStore } from "@/hooks/use-trade-store";
 import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { state } = useTradeStore();
+  const { state } = useNiveshStore();
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -40,9 +40,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <TradeVastuIcon className="w-8 h-8 text-primary" />
+            <NiveshSitu360Icon className="w-8 h-8 text-primary" />
             <span className="font-headline font-semibold text-xl text-primary">
-              TradeVastu
+              NiveshSitu360
             </span>
           </div>
         </SidebarHeader>

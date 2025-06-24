@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTradeStore } from "@/hooks/use-trade-store";
+import { useNiveshStore } from "@/hooks/use-trade-store";
 import {
   Card,
   CardContent,
@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 const COLORS = ["#FFB347", "#468499", "#82ca9d", "#ffc658", "#8884d8"];
 
 export default function PortfolioClient() {
-  const { state, getStockPrice } = useTradeStore();
+  const { state, getStockPrice } = useNiveshStore();
   const { holdings, cash } = state;
 
   const portfolioMetrics = useMemo(() => {

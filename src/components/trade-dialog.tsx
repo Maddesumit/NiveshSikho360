@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type { Stock } from "@/data/stocks";
-import { useTradeStore } from "@/hooks/use-trade-store";
+import { useNiveshStore } from "@/hooks/use-trade-store";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -26,7 +26,7 @@ export default function TradeDialog({
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { state, dispatch, getHolding } = useTradeStore();
+  const { state, dispatch, getHolding } = useNiveshStore();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
 
