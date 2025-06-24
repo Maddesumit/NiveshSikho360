@@ -5,8 +5,6 @@ import { StockCard } from "./stock-card";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { useNiveshStore } from "@/hooks/use-trade-store";
-import AiRecommendations from "./ai-recommendations";
-import { Separator } from "./ui/separator";
 
 export default function DashboardClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,10 +24,6 @@ export default function DashboardClient() {
        <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight font-headline">Dashboard</h1>
       </div>
-
-      <AiRecommendations />
-      
-      <Separator />
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">Market Watch</h2>

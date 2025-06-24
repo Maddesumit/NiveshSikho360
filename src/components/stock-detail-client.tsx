@@ -13,9 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip } from "recharts";
-import { Lightbulb, Newspaper, Search, Briefcase, AlertTriangle, ArrowUp, ArrowDown, BrainCircuit } from 'lucide-react';
+import { Lightbulb, Newspaper, Search, Briefcase, AlertTriangle, ArrowUp, ArrowDown, BrainCircuit, TrendingUp, TrendingDown, MinusCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { getKeyIssues, KeyIssuesOutput } from '@/ai/flows/key-issues-flow';
 import { answerStockQuestion, StockQaOutput } from '@/ai/flows/stock-qa-flow';
+import { getNewsSentiment, NewsSentimentOutput } from '@/ai/flows/news-sentiment-flow';
 import { cn } from '@/lib/utils';
 import TradeDialog from './trade-dialog';
 import { useNiveshStore } from '@/hooks/use-trade-store';
@@ -106,6 +108,11 @@ const KeyIssues = ({ stock, financials, news }: { stock: Stock, financials: Fina
             setLoading(false);
         }
     }, [stock, financials, news]);
+    
+    useEffect(() => {
+        // This useEffect is intentionally left empty.
+        // We will call fetchIssues manually via a button.
+    }, []);
 
     return (
         <Card>
@@ -172,10 +179,65 @@ const FinancialsTable = ({ data, type }: { data: any[], type: 'Quarterly' | 'Yea
     )
 }
 
+type AnalyzedNews = NewsArticle & { 
+  analysis?: NewsSentimentOutput;
+  loading?: boolean;
+};
+
+const SentimentIcon = ({ sentiment }: { sentiment: NewsSentimentOutput['sentiment'] }) => {
+    switch (sentiment) {
+      case 'Positive':
+        return <TrendingUp className="w-4 h-4 text-green-500" />;
+      case 'Negative':
+        return <TrendingDown className="w-4 h-4 text-red-500" />;
+      default:
+        return <MinusCircle className="w-4 h-4 text-gray-500" />;
+    }
+};
+
+const SentimentBadge = ({ sentiment }: { sentiment: NewsSentimentOutput['sentiment'] }) => {
+     switch (sentiment) {
+      case 'Positive':
+        return <Badge className="bg-green-100 text-green-700 hover:bg-green-200">Positive</Badge>;
+      case 'Negative':
+        return <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Negative</Badge>;
+      default:
+        return <Badge variant="secondary">Neutral</Badge>;
+    }
+};
+
 export default function StockDetailClient({ stock: initialStock, financials, relatedNews }: { stock: Stock, financials: FinancialData, relatedNews: NewsArticle[] }) {
     const { getStockPrice, stocks } = useNiveshStore();
     const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
     const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
+    const [analyzedNews, setAnalyzedNews] = useState<AnalyzedNews[]>(
+        () => relatedNews.map(n => ({...n, loading: false}))
+    );
+
+    const handleAnalyzeArticle = async (articleId: number) => {
+        setAnalyzedNews(currentNews => 
+          currentNews.map(n => n.id === articleId ? { ...n, loading: true } : n)
+        );
+    
+        const article = analyzedNews.find(n => n.id === articleId);
+        if (!article) return;
+    
+        try {
+          const analysis = await getNewsSentiment({
+            headline: article.headline,
+            content: article.summary,
+            stockSymbols: article.relatedStocks,
+          });
+          setAnalyzedNews(currentNews => 
+            currentNews.map(n => n.id === articleId ? { ...n, analysis, loading: false } : n)
+          );
+        } catch (error) {
+          console.error(`Failed to analyze sentiment for article ${articleId}:`, error);
+          setAnalyzedNews(currentNews => 
+            currentNews.map(n => n.id === articleId ? { ...n, loading: false } : n)
+          );
+        }
+    };
 
     // Get the live stock data from the store if available, otherwise use initial
     const stock = useMemo(() => {
@@ -283,15 +345,44 @@ export default function StockDetailClient({ stock: initialStock, financials, rel
                         <CardTitle className="flex items-center gap-2 font-headline"><Newspaper /> Related News</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {relatedNews.length > 0 ? (
-                            <ul className="space-y-4">
-                                {relatedNews.map(news => (
-                                    <li key={news.id}>
-                                        <p className="font-semibold">{news.headline}</p>
-                                        <p className="text-sm text-muted-foreground">{news.source} - {news.timestamp}</p>
-                                    </li>
+                       {analyzedNews.length > 0 ? (
+                            <div className="space-y-4">
+                                {analyzedNews.map((item) => (
+                                    <div key={item.id} className="p-3 bg-muted/30 rounded-lg border">
+                                        <p className="font-semibold">{item.headline}</p>
+                                        <p className="text-xs text-muted-foreground mb-2">{item.source} - {item.timestamp}</p>
+                                        <p className="text-sm text-foreground/80 mb-4">{item.summary}</p>
+
+                                        {item.analysis ? (
+                                            <div className="bg-background/50 p-3 rounded-lg space-y-2 border">
+                                                <div className="flex items-center gap-2">
+                                                    <SentimentIcon sentiment={item.analysis.sentiment} />
+                                                    <p className="font-semibold">AI Sentiment:</p>
+                                                    <SentimentBadge sentiment={item.analysis.sentiment} />
+                                                </div>
+                                                <p className="text-sm text-muted-foreground italic">"{item.analysis.reasoning}"</p>
+                                                {item.analysis.impactedStocks.map(stockImpact => (
+                                                    <p key={stockImpact.symbol} className="text-sm">
+                                                    <span className="font-semibold">{stockImpact.symbol}: </span>
+                                                    {stockImpact.impact}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <Button 
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleAnalyzeArticle(item.id)}
+                                                disabled={item.loading}
+                                                className="mt-2"
+                                            >
+                                                <BrainCircuit className="mr-2 h-4 w-4" />
+                                                {item.loading ? 'Analyzing...' : 'Analyze Sentiment'}
+                                            </Button>
+                                        )}
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         ) : (
                             <p className="text-muted-foreground text-sm text-center py-8">No recent news for this stock.</p>
                         )}
