@@ -38,7 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup';
+  const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup' || pathname === '/future-plans';
 
   useEffect(() => {
     if (loading) return;
@@ -60,7 +60,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/news", label: "Market News", icon: Newspaper },
     { href: "/academy", label: "Academy", icon: BookOpen },
     { href: "/glossary", label: "Glossary", icon: HelpCircle },
-    { href: "/future-plans", label: "Future Plans", icon: Rocket },
   ];
 
   if (isPublicPage) {
@@ -122,3 +121,5 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </SidebarProvider>
   );
 }
+
+    
