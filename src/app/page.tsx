@@ -124,6 +124,39 @@ const LandingPage = () => {
                 </div>
             </div>
         </section>
+        
+        <section className="py-20 md:py-28 bg-card/30">
+            <div className="container max-w-5xl mx-auto text-center">
+                <Banknote className="w-16 h-16 text-primary mx-auto" />
+                <h2 className="mt-6 text-3xl md:text-4xl font-bold font-headline">Get ₹1,00,000 Virtual Cash Instantly</h2>
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
+                    Your journey into the stock market begins with a risk-free starting capital. We provide you with ₹1,00,000 in virtual currency the moment you sign up, so you can start practicing immediately.
+                </p>
+                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
+                            <span className="text-2xl font-bold font-headline">1</span>
+                        </div>
+                        <h3 className="text-xl font-headline font-semibold mb-2">Create Your Account</h3>
+                        <p className="text-muted-foreground text-sm">Sign up for free in less than a minute. All you need is an email address.</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
+                             <span className="text-2xl font-bold font-headline">2</span>
+                        </div>
+                        <h3 className="text-xl font-headline font-semibold mb-2">Receive Your Funds</h3>
+                        <p className="text-muted-foreground text-sm">Your portfolio is automatically credited with ₹1,00,000 of virtual cash. No strings attached.</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
+                             <span className="text-2xl font-bold font-headline">3</span>
+                        </div>
+                        <h3 className="text-xl font-headline font-semibold mb-2">Start Trading</h3>
+                        <p className="text-muted-foreground text-sm">Use your virtual capital to buy and sell stocks, build your portfolio, and apply what you learn in our Academy.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section className="py-20 md:py-28 bg-card/30">
             <div className="container text-center">
@@ -171,39 +204,6 @@ const LandingPage = () => {
                                 <span className="sr-only">Email</span>
                             </a>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section className="py-20 md:py-28 bg-card/30">
-            <div className="container max-w-5xl mx-auto text-center">
-                <Banknote className="w-16 h-16 text-primary mx-auto" />
-                <h2 className="mt-6 text-3xl md:text-4xl font-bold font-headline">Get ₹1,00,000 Virtual Cash Instantly</h2>
-                <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-                    Your journey into the stock market begins with a risk-free starting capital. We provide you with ₹1,00,000 in virtual currency the moment you sign up, so you can start practicing immediately.
-                </p>
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
-                            <span className="text-2xl font-bold font-headline">1</span>
-                        </div>
-                        <h3 className="text-xl font-headline font-semibold mb-2">Create Your Account</h3>
-                        <p className="text-muted-foreground text-sm">Sign up for free in less than a minute. All you need is an email address.</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
-                             <span className="text-2xl font-bold font-headline">2</span>
-                        </div>
-                        <h3 className="text-xl font-headline font-semibold mb-2">Receive Your Funds</h3>
-                        <p className="text-muted-foreground text-sm">Your portfolio is automatically credited with ₹1,00,000 of virtual cash. No strings attached.</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center p-6 border border-border/50 rounded-lg bg-background/30">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary border-2 border-primary mb-4">
-                             <span className="text-2xl font-bold font-headline">3</span>
-                        </div>
-                        <h3 className="text-xl font-headline font-semibold mb-2">Start Trading</h3>
-                        <p className="text-muted-foreground text-sm">Use your virtual capital to buy and sell stocks, build your portfolio, and apply what you learn in our Academy.</p>
                     </div>
                 </div>
             </div>
