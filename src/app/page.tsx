@@ -80,7 +80,6 @@ const LandingPage = () => {
 
   return (
     <div className="flex flex-col min-h-dvh bg-background text-foreground overflow-x-hidden">
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/10 to-transparent -z-10"></div>
       <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl">
         <div className="container mx-auto px-4 flex h-16 max-w-screen-xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -99,22 +98,41 @@ const LandingPage = () => {
       </header>
 
       <main className="flex-grow">
-        <section className="relative py-20 md:py-32">
-            <div className="container mx-auto px-4 max-w-screen-xl">
-                <div className="space-y-6 text-center max-w-4xl mx-auto">
-                    <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
-                        NiveshSikho360: India’s Ultimate <span className="text-primary text-glow-primary">Investment Learning Platform</span>
-                    </h1>
-                    <p className="text-lg text-muted-foreground">
-                        Practice with ₹1,00,000 virtual cash. Trade stocks. Simulate mutual funds. Build financial confidence.
-                    </p>
-                    <div className="pt-4">
-                        <Link href="/signup" className={cn(buttonVariants({ size: "lg", className: "rounded-full" }))}>
-                            Open an Account <ArrowRight className="ml-2" />
-                        </Link>
-                    </div>
+        <section className="relative py-20 md:py-32 overflow-hidden">
+          <div className="absolute inset-0 -z-20 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[80%] h-[60%] rounded-full bg-primary/10 blur-[100px] -z-10"></div>
+
+          <div className="container mx-auto px-4 max-w-screen-xl">
+            <div className="space-y-8 text-center max-w-4xl mx-auto">
+              <Badge variant="outline" className="border-primary/50 py-1 px-4 text-primary font-medium">
+                <Rocket className="mr-2 h-4 w-4" /> V2.0 is now live!
+              </Badge>
+              <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
+                NiveshSikho360: India’s Ultimate <span className="text-primary text-glow-primary">Investment Learning Platform</span>
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Practice with ₹1,00,000 virtual cash. Trade stocks. Simulate mutual funds. Build financial confidence.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+                <Link href="/signup" className={cn(buttonVariants({ size: "lg", className: "rounded-full w-full sm:w-auto" }))}>
+                    Claim Your ₹1,00,000 <ArrowRight className="ml-2" />
+                </Link>
+                <Link href="#features" className={cn(buttonVariants({ size: "lg", variant: "ghost", className: "rounded-full w-full sm:w-auto" }))}>
+                    Explore Features
+                </Link>
+              </div>
+              <div className="pt-6 flex flex-col sm:flex-row justify-center items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                  <span>Zero-Risk Simulation</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <Banknote className="w-5 h-5 text-primary" />
+                  <span>No Credit Card Required</span>
+                </div>
+              </div>
             </div>
+          </div>
         </section>
 
         <section className="py-20 md:py-28 section-glow">
