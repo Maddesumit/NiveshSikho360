@@ -78,18 +78,18 @@ const LandingPage = () => {
       </header>
 
       <main className="flex-grow">
-        <section className="relative py-20 md:py-32 bg-grid">
+        <section className="relative py-20 md:py-32 bg-grid-hero">
             <div className="absolute inset-0 bg-gradient-to-b from-background to-transparent pointer-events-none"></div>
              <div className="container relative text-center">
                 <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter text-glow">
                     Master the Market, Risk-Free
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                    A hyper-realistic stock market simulator and learning academy designed for the next generation of Indian investors. Practice, learn, and build confidence without risking a single rupee.
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
+                    A hyper-realistic stock market simulator for India. Get started with ₹1,00,000 in virtual cash to practice trading, build your portfolio, and learn the markets without risking a single rupee.
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                     <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
-                        Start Learning for Free
+                        Get Your Free ₹1,00,000
                     </Link>
                     <Link href="#features" className={cn(buttonVariants({ size: "lg", variant: "outline" }))}>
                         Explore Features
@@ -182,11 +182,11 @@ const LandingPage = () => {
                 <Rocket className="w-16 h-16 text-primary mx-auto" />
                 <h2 className="mt-6 text-3xl md:text-4xl font-bold font-headline">Ready to Start Your Journey?</h2>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                   Join thousands of aspiring investors. Your path to financial confidence starts here.
+                   Join thousands of aspiring investors. Sign up in seconds and get ₹1,00,000 in virtual funds to start your journey.
                 </p>
                  <div className="mt-8">
                      <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
-                        Create Your Free Account
+                        Create Your Free Account & Claim Funds
                     </Link>
                 </div>
             </div>

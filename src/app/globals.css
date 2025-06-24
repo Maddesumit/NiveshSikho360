@@ -108,4 +108,11 @@ body {
         linear-gradient(to right, hsl(var(--border) / 0.1) 1px, hsl(var(--background)) 1px);
         background-size: 2rem 2rem;
     }
+    .bg-grid-hero {
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.1), transparent),
+        linear-gradient(hsl(var(--border) / 0.1) 1px, transparent 1px),
+        linear-gradient(to right, hsl(var(--border) / 0.1) 1px, hsl(var(--background)) 1px);
+      background-size: 100% 100%, 2rem 2rem;
+    }
 }
