@@ -37,7 +37,7 @@ export default function LoginPage() {
     }
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -46,10 +46,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background bg-grid">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-            <NiveshSikho360Icon className="w-12 h-12 mx-auto text-primary" />
+            <Link href="/" className="mx-auto">
+              <NiveshSikho360Icon className="w-12 h-12 mx-auto text-primary" />
+            </Link>
             <CardTitle className="text-2xl font-headline mt-2">Welcome Back!</CardTitle>
             <CardDescription>Sign in to continue to NiveshSikho360.</CardDescription>
         </CardHeader>

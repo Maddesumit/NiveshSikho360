@@ -42,7 +42,7 @@ export default function SignupPage() {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -51,10 +51,12 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background bg-grid">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
+          <Link href="/" className="mx-auto">
             <NiveshSikho360Icon className="w-12 h-12 mx-auto text-primary" />
+          </Link>
             <CardTitle className="text-2xl font-headline mt-2">Create an Account</CardTitle>
             <CardDescription>Join NiveshSikho360 to start your learning journey.</CardDescription>
         </CardHeader>

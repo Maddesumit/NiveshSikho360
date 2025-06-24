@@ -38,20 +38,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup';
 
   useEffect(() => {
-    if (!loading && !user && !isAuthPage) {
+    if (loading) return;
+
+    // If user is logged in and tries to access a public page, redirect to dashboard
+    if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/')) {
+      router.push('/dashboard');
+    }
+
+    // If user is not logged in and tries to access a protected page, redirect to login
+    if (!user && !isPublicPage) {
       router.push('/login');
     }
-    if (!loading && user && isAuthPage) {
-      router.push('/');
-    }
-  }, [user, loading, router, isAuthPage, pathname]);
-
+  }, [user, loading, router, pathname, isPublicPage]);
 
   const navItems = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
     { href: "/news", label: "Market News", icon: Newspaper },
     { href: "/academy", label: "Academy", icon: BookOpen },
@@ -59,19 +63,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/future-plans", label: "Future Plans", icon: Rocket },
   ];
 
-  if (isAuthPage || loading) {
-    const showLoader = loading || (!user && !isAuthPage);
-    return (
-      <>
-        {showLoader ? (
-          <div className="flex h-screen items-center justify-center">
-            <Loader className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          children
-        )}
-      </>
-    );
+  if (isPublicPage) {
+    return <>{children}</>;
+  }
+  
+  if (loading || (!user && !isPublicPage)) {
+     return (
+        <div className="flex h-screen items-center justify-center bg-background">
+          <Loader className="h-8 w-8 animate-spin text-primary" />
+        </div>
+     );
   }
 
   return (
@@ -91,7 +92,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href}>
                   <SidebarMenuButton
-                    isActive={pathname.startsWith(item.href) && (item.href !== '/' || pathname === '/')}
+                    isActive={pathname.startsWith(item.href)}
                     tooltip={item.label}
                   >
                     <item.icon />
