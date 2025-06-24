@@ -1,8 +1,9 @@
+
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   SidebarProvider,
   Sidebar,
@@ -25,20 +26,29 @@ import {
   BookOpen,
   HelpCircle,
   Rocket,
+  Loader,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
-import { useNiveshStore } from "@/hooks/use-trade-store";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import { UserNav } from "./user-nav";
 import { Skeleton } from "./ui/skeleton";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { state } = useNiveshStore();
-  const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (!loading && !user && !isAuthPage) {
+      router.push('/login');
+    }
+    if (!loading && user && isAuthPage) {
+      router.push('/');
+    }
+  }, [user, loading, router, isAuthPage, pathname]);
+
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -48,6 +58,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/glossary", label: "Glossary", icon: HelpCircle },
     { href: "/future-plans", label: "Future Plans", icon: Rocket },
   ];
+
+  if (isAuthPage || loading) {
+    const showLoader = loading || (!user && !isAuthPage);
+    return (
+      <>
+        {showLoader ? (
+          <div className="flex h-screen items-center justify-center">
+            <Loader className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          children
+        )}
+      </>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -89,21 +114,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b bg-card">
           <SidebarTrigger />
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary">
-              <Wallet className="w-6 h-6 text-accent" />
-              <div className="text-lg font-semibold w-32">
-                {isClient ? (
-                  new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                  }).format(state.cash)
-                ) : (
-                  <Skeleton className="h-6 w-full" />
-                )}
-              </div>
-            </div>
-          </div>
+          <UserNav />
         </header>
         <main className="flex-1 bg-background">{children}</main>
       </SidebarInset>

@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { NiveshProvider } from '@/hooks/use-trade-store';
 import AppLayout from '@/components/app-layout';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: 'NiveshSikho360',
@@ -23,12 +24,14 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <NiveshProvider>
-          <AppLayout>
-            {children}
-          </AppLayout>
-          <Toaster />
-        </NiveshProvider>
+        <AuthProvider>
+          <NiveshProvider>
+            <AppLayout>
+              {children}
+            </AppLayout>
+            <Toaster />
+          </NiveshProvider>
+        </AuthProvider>
       </body>
     </html>
   );
