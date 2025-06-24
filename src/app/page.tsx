@@ -104,9 +104,6 @@ const LandingPage = () => {
 
           <div className="container mx-auto px-4 max-w-screen-xl">
             <div className="space-y-8 text-center max-w-4xl mx-auto">
-              <Badge variant="outline" className="border-primary/50 py-1 px-4 text-primary font-medium">
-                <Rocket className="mr-2 h-4 w-4" /> V2.0 is now live!
-              </Badge>
               <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
                 NiveshSikho360: India’s Ultimate <span className="text-primary text-glow-primary">Investment Learning Platform</span>
               </h1>
