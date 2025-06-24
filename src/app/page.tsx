@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Separator } from '@/components/ui/separator';
 
 const features: { title: string; description: string; icon: LucideIcon }[] = [
   {
@@ -228,12 +229,23 @@ const LandingPage = () => {
       </main>
 
       <footer className="border-t border-border/40 py-8">
-        <div className="container flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
-            <div className="flex items-center gap-2">
-                <NiveshSikho360Icon className="w-6 h-6 text-muted-foreground" />
-                <span className="text-muted-foreground">NiveshSikho360</span>
+        <div className="container text-sm text-muted-foreground">
+            <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+                <div className="flex items-center gap-2">
+                    <NiveshSikho360Icon className="w-6 h-6" />
+                    <span>NiveshSikho360</span>
+                </div>
+                <p>© {new Date().getFullYear()} NiveshSikho360. All rights reserved.</p>
             </div>
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} NiveshSikho360. All rights reserved.</p>
+            <Separator className="my-6" />
+            <div className="text-center text-xs space-y-2">
+                <p>
+                    <strong>Disclaimer:</strong> NiveshSikho360 is a stock market simulation platform for educational purposes only. All data is simulated or delayed and should not be used for real-world trading decisions.
+                </p>
+                <p>
+                    Investing in the stock market involves risk, including the loss of principal. All AI-generated insights, recommendations, and forecasts are for informational purposes only and do not constitute financial advice. Always consult with a qualified financial advisor before making any investment decisions.
+                </p>
+            </div>
         </div>
       </footer>
     </div>
