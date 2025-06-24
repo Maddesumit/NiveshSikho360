@@ -1,8 +1,12 @@
+
 "use client";
 
 import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect, useMemo } from "react";
 import type { Stock } from "@/data/stocks";
 import { getStocks, getStockBySymbol, pseudoRandomGenerator } from "@/data/stocks";
+import { useAuth } from "./use-auth";
+import { db } from "@/lib/firebase";
+import { doc, setDoc, getDoc, onSnapshot, Unsubscribe } from "firebase/firestore";
 
 type Holding = {
   stock: Stock;
@@ -21,7 +25,8 @@ type Action =
   | { type: "BUY"; payload: { stock: Stock; quantity: number } }
   | { type: "SELL"; payload: { stock: Stock; quantity: number } }
   | { type: "COMPLETE_MODULE"; payload: string }
-  | { type: "COMPLETE_COURSE" };
+  | { type: "COMPLETE_COURSE" }
+  | { type: "SET_STATE_FROM_DB"; payload: NiveshState };
 
 const initialState: NiveshState = {
   cash: 100000,
@@ -32,6 +37,8 @@ const initialState: NiveshState = {
 
 const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
   switch (action.type) {
+    case "SET_STATE_FROM_DB":
+      return action.payload;
     case "BUY": {
       const { stock, quantity } = action.payload;
       const cost = stock.price * quantity;
@@ -140,19 +147,62 @@ type NiveshContextType = {
 const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
+  const { user, loading: authLoading } = useAuth();
   const [state, dispatch] = useReducer(niveshReducer, initialState);
   const [stocks, setStocks] = useState<Stock[]>([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   
   const priceGenerators = useMemo(() => {
-    // This will only run once on the client, after getStocks() is available.
     return getStocks().map(stock => pseudoRandomGenerator(stock.symbol + 'pricefeed'));
   }, []);
 
   useEffect(() => {
-    // Initialize stocks on the client side to avoid hydration mismatches
-    // with server-generated static data.
     setStocks(getStocks());
   }, []);
+
+  useEffect(() => {
+    if (authLoading) return; // Wait for auth to be ready
+    if (!db) return; // Wait for Firestore to be ready
+
+    let unsubscribe: Unsubscribe | undefined;
+
+    if (user) {
+      const userDocRef = doc(db, "users", user.uid);
+      
+      unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const dbState = docSnap.data() as NiveshState;
+          dispatch({ type: "SET_STATE_FROM_DB", payload: dbState });
+        } else {
+          // New user, set initial state in DB
+          setDoc(userDocRef, initialState);
+          dispatch({ type: "SET_STATE_FROM_DB", payload: initialState });
+        }
+        setIsDataLoaded(true);
+      });
+    } else {
+      // User is logged out, reset to initial state
+      dispatch({ type: "SET_STATE_FROM_DB", payload: initialState });
+      setIsDataLoaded(true);
+    }
+    
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user, authLoading]);
+
+  // Effect to save state changes to Firestore
+  useEffect(() => {
+    if (!authLoading && user && db && isDataLoaded) {
+      // Avoid writing the initial state fetch back to DB
+      if (JSON.stringify(state) !== JSON.stringify(initialState)) {
+        const userDocRef = doc(db, "users", user.uid);
+        setDoc(userDocRef, state, { merge: true });
+      }
+    }
+  }, [state, user, authLoading, isDataLoaded]);
 
   useEffect(() => {
     if (stocks.length === 0 || priceGenerators.length === 0) return;
@@ -163,7 +213,7 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
           const rand = priceGenerators[index];
           if (!rand) return stock;
           
-          const changePercent = (rand() - 0.5) * 0.01; // Fluctuate by +/- 0.5%
+          const changePercent = (rand() - 0.5) * 0.01;
           const newPrice = Math.max(0.01, stock.price * (1 + changePercent));
           
           return {
