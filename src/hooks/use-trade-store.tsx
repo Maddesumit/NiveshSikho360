@@ -1,13 +1,14 @@
 
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect } from "react";
 import type { Stock } from "@/data/stocks";
 import { getStocks, getStockBySymbol, pseudoRandomGenerator } from "@/data/stocks";
 import { useAuth } from "./use-auth";
 import { db } from "@/lib/firebase";
-import { doc, setDoc, getDoc, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { doc, setDoc, onSnapshot, Unsubscribe } from "firebase/firestore";
 
+// The state used within the application, with full Stock objects for convenience
 type Holding = {
   stock: Stock;
   quantity: number;
@@ -20,6 +21,20 @@ type NiveshState = {
   completedModules: string[];
   courseCompleted: boolean;
 };
+
+// The format of data as it is stored in Firestore
+type StoredHolding = {
+  stockSymbol: string;
+  quantity: number;
+  avgPrice: number;
+}
+
+type StoredNiveshState = {
+  cash: number;
+  holdings: StoredHolding[];
+  completedModules: string[];
+  courseCompleted: boolean;
+}
 
 type Action =
   | { type: "BUY"; payload: { stock: Stock; quantity: number } }
@@ -150,19 +165,20 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const { user, loading: authLoading } = useAuth();
   const [state, dispatch] = useReducer(niveshReducer, initialState);
   const [stocks, setStocks] = useState<Stock[]>([]);
+  const [priceGenerators, setPriceGenerators] = useState<(() => number)[]>([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  
-  const priceGenerators = useMemo(() => {
-    return getStocks().map(stock => pseudoRandomGenerator(stock.symbol + 'pricefeed'));
+
+  // Defer heavy stock data generation to the client side
+  useEffect(() => {
+    const allStocks = getStocks();
+    setStocks(allStocks);
+    setPriceGenerators(allStocks.map(stock => pseudoRandomGenerator(stock.symbol + 'pricefeed')));
   }, []);
 
+  // Effect to load data from Firestore
   useEffect(() => {
-    setStocks(getStocks());
-  }, []);
-
-  useEffect(() => {
-    if (authLoading) return; // Wait for auth to be ready
-    if (!db) return; // Wait for Firestore to be ready
+    if (authLoading) return;
+    if (!db) return;
 
     let unsubscribe: Unsubscribe | undefined;
 
@@ -171,8 +187,14 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
       
       unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
-          const dbState = docSnap.data() as NiveshState;
-          dispatch({ type: "SET_STATE_FROM_DB", payload: dbState });
+          const dbState = docSnap.data() as StoredNiveshState;
+          // Re-hydrate holdings with full stock objects
+          const holdings = (dbState.holdings || []).map(h => {
+              const stock = getStockBySymbol(h.stockSymbol);
+              return stock ? { ...h, stock } : null
+          }).filter((h): h is Holding => h !== null);
+
+          dispatch({ type: "SET_STATE_FROM_DB", payload: { ...dbState, holdings } });
         } else {
           // New user, set initial state in DB
           setDoc(userDocRef, initialState);
@@ -187,23 +209,31 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
     }
     
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
+      if (unsubscribe) unsubscribe();
     };
   }, [user, authLoading]);
 
   // Effect to save state changes to Firestore
   useEffect(() => {
     if (!authLoading && user && db && isDataLoaded) {
-      // Avoid writing the initial state fetch back to DB
-      if (JSON.stringify(state) !== JSON.stringify(initialState)) {
-        const userDocRef = doc(db, "users", user.uid);
-        setDoc(userDocRef, state, { merge: true });
-      }
+      // Don't save the initial default state for a new user
+      if (state === initialState) return;
+
+      const stateToStore: StoredNiveshState = {
+        ...state,
+        holdings: state.holdings.map(h => ({
+          stockSymbol: h.stock.symbol,
+          quantity: h.quantity,
+          avgPrice: h.avgPrice,
+        }))
+      };
+
+      const userDocRef = doc(db, "users", user.uid);
+      setDoc(userDocRef, stateToStore, { merge: true });
     }
   }, [state, user, authLoading, isDataLoaded]);
 
+  // Effect for live price updates
   useEffect(() => {
     if (stocks.length === 0 || priceGenerators.length === 0) return;
 
