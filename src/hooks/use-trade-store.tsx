@@ -13,15 +13,21 @@ type Holding = {
 type NiveshState = {
   cash: number;
   holdings: Holding[];
+  completedModules: string[];
+  courseCompleted: boolean;
 };
 
 type Action =
   | { type: "BUY"; payload: { stock: Stock; quantity: number } }
-  | { type: "SELL"; payload: { stock: Stock; quantity: number } };
+  | { type: "SELL"; payload: { stock: Stock; quantity: number } }
+  | { type: "COMPLETE_MODULE"; payload: string }
+  | { type: "COMPLETE_COURSE" };
 
 const initialState: NiveshState = {
   cash: 100000,
   holdings: [],
+  completedModules: [],
+  courseCompleted: false,
 };
 
 const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
@@ -98,6 +104,25 @@ const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
         holdings: newHoldings
       };
     }
+    case "COMPLETE_MODULE": {
+        if (state.completedModules.includes(action.payload)) {
+            return state;
+        }
+        return {
+            ...state,
+            completedModules: [...state.completedModules, action.payload],
+        };
+    }
+    case "COMPLETE_COURSE": {
+        if (state.courseCompleted) {
+            return state;
+        }
+        return {
+            ...state,
+            courseCompleted: true,
+            cash: state.cash + 10000,
+        };
+    }
     default:
       return state;
   }
@@ -116,7 +141,12 @@ const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(niveshReducer, initialState);
-  const [stocks, setStocks] = useState<Stock[]>(() => getStocks());
+  const [stocks, setStocks] = useState<Stock[]>([]);
+
+  useEffect(() => {
+    // Client-side only initialization
+    setStocks(getStocks());
+  }, []);
 
   useEffect(() => {
     if (stocks.length === 0) return; // Don't start interval if there are no stocks
@@ -141,16 +171,20 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   }, [stocks.length]);
 
   const executeTrade = useCallback((action: Action) => {
-    const latestStock = stocks.find(s => s.symbol === action.payload.stock.symbol);
-    if (latestStock) {
-      dispatch({ ...action, payload: { ...action.payload, stock: latestStock } });
+    if (action.type === 'BUY' || action.type === 'SELL') {
+      const latestStock = stocks.find(s => s.symbol === action.payload.stock.symbol);
+      if (latestStock) {
+        dispatch({ ...action, payload: { ...action.payload, stock: latestStock } });
+      } else {
+          const initialStock = getStockBySymbol(action.payload.stock.symbol);
+           if (initialStock) {
+              dispatch({ ...action, payload: { ...action.payload, stock: initialStock } });
+           } else {
+              console.error("Could not find latest stock data for trade.");
+           }
+      }
     } else {
-        const initialStock = getStockBySymbol(action.payload.stock.symbol);
-         if (initialStock) {
-            dispatch({ ...action, payload: { ...action.payload, stock: initialStock } });
-         } else {
-            console.error("Could not find latest stock data for trade.");
-         }
+      dispatch(action);
     }
   }, [stocks]);
 

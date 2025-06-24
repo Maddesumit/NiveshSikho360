@@ -4,7 +4,7 @@ export type QuizQuestion = {
     correctAnswer: string;
 };
   
-export type AcademyTopic = {
+export type AcademyModule = {
     id: string;
     level: 'Beginner' | 'Intermediate' | 'Advanced';
     title: string;
@@ -13,7 +13,15 @@ export type AcademyTopic = {
     quiz: QuizQuestion[];
 };
 
-export const academyTopics: AcademyTopic[] = [
+export type AcademyCourse = {
+    id: string;
+    title: string;
+    description: string;
+    modules: AcademyModule[];
+    finalQuiz: QuizQuestion[];
+}
+
+const courseModules: AcademyModule[] = [
     // Beginner
     {
         id: 'what-is-a-stock',
@@ -91,13 +99,97 @@ export const academyTopics: AcademyTopic[] = [
                 correctAnswer: "Investors expect future growth"
             }
         ]
+    },
+    // Advanced
+    {
+        id: 'technical-indicators',
+        level: 'Advanced',
+        title: 'Technical Indicators (RSI, MACD)',
+        explanation: "Technical indicators are heuristic or pattern-based signals produced by the price, volume, and/or open interest of a security or contract. The Relative Strength Index (RSI) is a momentum oscillator that measures the speed and change of price movements, typically on a scale of 0 to 100. RSI is considered overbought when above 70 and oversold when below 30. The Moving Average Convergence Divergence (MACD) is a trend-following momentum indicator that shows the relationship between two moving averages of a security’s price. A 'buy' signal occurs when the MACD line crosses above the signal line.",
+        example: "An analyst might say, 'The stock's RSI just dropped below 30, suggesting it's oversold and could be a buying opportunity.' Or, 'We're seeing a bullish MACD crossover, which could signal the start of an upward trend.'",
+        quiz: [
+            {
+                question: "What does an RSI value above 70 typically indicate?",
+                options: ["The stock is oversold", "The stock is overbought", "A neutral trend", "A buy signal"],
+                correctAnswer: "The stock is overbought"
+            },
+            {
+                question: "What does the MACD indicator primarily help to identify?",
+                options: ["Company earnings", "Market volatility", "Trends and momentum", "Analyst ratings"],
+                correctAnswer: "Trends and momentum"
+            }
+        ]
+    },
+    {
+        id: 'trading-psychology',
+        level: 'Advanced',
+        title: 'Trading Psychology',
+        explanation: "Trading psychology refers to the emotions and mental state that help to dictate success or failure in trading securities. Two of the most significant emotions are fear and greed. Fear can cause a trader to sell a position too early, missing out on potential gains, or avoid entering a trade altogether. Greed can lead to holding a winning position for too long in hopes of an even bigger profit, only to see it turn into a loss. Successful traders learn to manage these emotions, stick to their trading plan, and maintain discipline, treating trading like a business rather than a casino.",
+        example: "An investor succumbs to FOMO (Fear Of Missing Out) and buys a stock after it has already risen 50% in a week, which is a decision driven by greed. Another trader panics during a small market dip and sells all their holdings at a loss, driven by fear.",
+        quiz: [
+            {
+                question: "Which two emotions are considered the biggest challenges in trading psychology?",
+                options: ["Joy and Sadness", "Hope and Despair", "Fear and Greed", "Confidence and Doubt"],
+                correctAnswer: "Fear and Greed"
+            },
+            {
+                question: "What is a key trait of a successful trader?",
+                options: ["Taking big risks for big rewards", "Following hot tips", "Always being in the market", "Maintaining discipline and a trading plan"],
+                correctAnswer: "Maintaining discipline and a trading plan"
+            }
+        ]
     }
 ];
 
-export const getAcademyTopics = (): AcademyTopic[] => {
-    return academyTopics;
+export const courseData: AcademyCourse = {
+    id: 'stock-market-101',
+    title: 'Learn Stock Market from Beginner to Advance',
+    description: 'A comprehensive course designed to take you from the very basics of stock investing to advanced concepts. Learn at your own pace with bite-sized modules, interactive quizzes, and practical examples.',
+    modules: courseModules,
+    finalQuiz: [
+        // Sample questions from each module
+        {
+            question: "What does a stock represent?",
+            options: ["A loan to a company", "Ownership in a company", "A company's debt", "A government bond"],
+            correctAnswer: "Ownership in a company"
+        },
+        {
+            question: "What is the benchmark index for the NSE?",
+            options: ["SENSEX", "Dow Jones", "Nifty 50", "FTSE 100"],
+            correctAnswer: "Nifty 50"
+        },
+        {
+            question: "Which order type guarantees execution but not the price?",
+            options: ["Limit Order", "Stop Order", "Market Order", "Trailing Stop Order"],
+            correctAnswer: "Market Order"
+        },
+        {
+            question: "How is the P/E ratio calculated?",
+            options: ["Stock Price / Revenue", "Market Cap / Debt", "Stock Price / Earnings Per Share", "Revenue / Net Profit"],
+            correctAnswer: "Stock Price / Earnings Per Share"
+        },
+        {
+            question: "What does an RSI value above 70 typically indicate?",
+            options: ["The stock is oversold", "The stock is overbought", "A neutral trend", "A buy signal"],
+            correctAnswer: "The stock is overbought"
+        },
+        {
+            question: "Which two emotions are considered the biggest challenges in trading psychology?",
+            options: ["Joy and Sadness", "Hope and Despair", "Fear and Greed", "Confidence and Doubt"],
+            correctAnswer: "Fear and Greed"
+        }
+    ]
 };
 
-export const getAcademyTopicById = (id: string): AcademyTopic | undefined => {
-    return academyTopics.find(topic => topic.id === id);
+
+export const getCourse = (): AcademyCourse => {
+    return courseData;
+};
+
+export const getModules = (): AcademyModule[] => {
+    return courseData.modules;
+}
+
+export const getModuleById = (id: string): AcademyModule | undefined => {
+    return courseData.modules.find(m => m.id === id);
 };

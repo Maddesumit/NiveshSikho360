@@ -1,21 +1,21 @@
-import { getAcademyTopicById } from '@/data/academy';
-import AcademyTopicClient from '@/components/academy-topic-client';
+import { getModuleById } from '@/data/academy';
+import ModuleClient from '@/components/module-client';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-type AcademyTopicPageProps = {
+type AcademyModulePageProps = {
   params: {
-    topicId: string;
+    topicId: string; // This is now a moduleId
   };
 };
 
-export default function AcademyTopicPage({ params }: AcademyTopicPageProps) {
-  const topic = getAcademyTopicById(params.topicId);
+export default function AcademyModulePage({ params }: AcademyModulePageProps) {
+  const module = getModuleById(params.topicId);
 
-  if (!topic) {
+  if (!module) {
     notFound();
   }
 
-  return <AcademyTopicClient topic={topic} />;
+  return <ModuleClient module={module} />;
 }
