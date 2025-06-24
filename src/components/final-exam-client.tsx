@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, RotateCcw, PartyPopper } from 'lucide-react';
+import { ArrowRight, RotateCcw, PartyPopper, Check, X } from 'lucide-react';
 import AcademyCertificate from './academy-certificate';
 import Link from 'next/link';
 
@@ -57,6 +58,36 @@ export default function FinalExamClient() {
     setScore(0);
   };
 
+  const ExamReview = () => (
+    <Card className="max-w-4xl mx-auto mb-8">
+        <CardHeader>
+            <CardTitle>Your Exam Review</CardTitle>
+            <CardDescription>You scored {score.toFixed(0)}%.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3 max-h-[40vh] overflow-y-auto p-4">
+          {quiz.map((q, index) => {
+              const userAnswer = selectedAnswers[index];
+              const isCorrect = userAnswer === q.correctAnswer;
+              return (
+                  <div key={index} className={`p-3 rounded-md border text-sm ${isCorrect ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`} >
+                      <p className="font-semibold">{q.question}</p>
+                      <p className={`mt-2 flex items-center gap-1.5 ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                          {isCorrect ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                          Your answer: <span className="font-medium">{userAnswer || "Not answered"}</span>
+                      </p>
+                      {!isCorrect && (
+                          <p className="mt-1 flex items-center gap-1.5 text-green-700">
+                             <Check className="w-4 h-4 text-green-700" />
+                             Correct answer: <span className="font-medium">{q.correctAnswer}</span>
+                          </p>
+                      )}
+                  </div>
+              )
+          })}
+        </CardContent>
+    </Card>
+  );
+
   if (courseCompleted || showResults) {
     const isPassed = score >= 70 || courseCompleted;
     if (isPassed) {
@@ -65,27 +96,28 @@ export default function FinalExamClient() {
           <div className="text-center mb-8">
             <PartyPopper className="w-16 h-16 text-primary mx-auto" />
             <h1 className="text-4xl font-bold tracking-tight font-headline">Congratulations!</h1>
-            <p className="text-lg text-muted-foreground">You passed the final exam.</p>
+            <p className="text-lg text-muted-foreground">
+              {showResults ? `You passed the final exam!` : "You have already completed the course."}
+            </p>
           </div>
+          {showResults && <ExamReview />}
           <AcademyCertificate courseTitle={course.title} />
         </div>
       );
     } else { // Failed and showing results
         return (
-            <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 flex items-center justify-center">
-                <Card className="max-w-xl text-center">
-                    <CardHeader>
-                        <CardTitle>Quiz Results</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <p className="text-4xl font-bold text-red-600">
-                            You scored {score.toFixed(0)}%
-                        </p>
-                        <p className="text-muted-foreground">You need 70% to pass. Don't worry, you can try again!</p>
-                        <Button onClick={resetQuiz}><RotateCcw className="mr-2" /> Try Again</Button>
-                    </CardContent>
-                </Card>
-            </div>
+          <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 flex items-center justify-center">
+              <div className="w-full max-w-3xl">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold tracking-tight font-headline">Try Again!</h1>
+                    <p className="text-lg text-muted-foreground">You need 70% to pass.</p>
+                </div>
+                <ExamReview />
+                <div className="text-center mt-6">
+                    <Button onClick={resetQuiz} size="lg"><RotateCcw className="mr-2" /> Take Exam Again</Button>
+                </div>
+              </div>
+          </div>
         )
     }
   }

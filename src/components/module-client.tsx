@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, BookText, Brain, RotateCcw, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, BookText, Brain, RotateCcw, FileText, CheckCircle2, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
@@ -54,17 +55,43 @@ const Quiz = ({ module, onQuizComplete }: { module: AcademyModule, onQuizComplet
       const score = calculateScore();
       const isPassed = score >= 80;
       return (
-        <div className="text-center space-y-4">
-          <h3 className="text-2xl font-bold font-headline">Quiz Results</h3>
-          <p className={`text-4xl font-bold ${isPassed ? 'text-green-600' : 'text-red-600'}`}>
-            You scored {score.toFixed(0)}%
-          </p>
-          {isPassed ? (
-            <p className="text-green-600 font-semibold flex items-center justify-center gap-2"><CheckCircle2 /> Module Complete!</p>
-          ): (
-            <p className="text-muted-foreground">You need 80% to pass. Don't worry, you can try again!</p>
-          )}
-          <div className="flex justify-center gap-2">
+        <div className="space-y-4">
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-bold font-headline">Quiz Results</h3>
+            <p className={`text-4xl font-bold ${isPassed ? 'text-green-600' : 'text-red-600'}`}>
+              You scored {score.toFixed(0)}%
+            </p>
+            {isPassed ? (
+              <p className="text-green-600 font-semibold flex items-center justify-center gap-2"><CheckCircle2 /> Module Complete!</p>
+            ): (
+              <p className="text-muted-foreground">You need 80% to pass. Don't worry, you can try again!</p>
+            )}
+          </div>
+    
+          <div className="space-y-3 pt-4 border-t mt-4">
+            <h4 className="font-semibold text-center text-lg">Review Your Answers</h4>
+            {module.quiz.map((q, index) => {
+                const userAnswer = selectedAnswers[index];
+                const isCorrect = userAnswer === q.correctAnswer;
+                return (
+                    <div key={index} className={`p-3 rounded-md border text-sm ${isCorrect ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`} >
+                        <p className="font-semibold">{q.question}</p>
+                        <p className={`mt-2 flex items-center gap-1.5 ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                            {isCorrect ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                            Your answer: <span className="font-medium">{userAnswer || "Not answered"}</span>
+                        </p>
+                        {!isCorrect && (
+                            <p className="mt-1 flex items-center gap-1.5 text-green-700">
+                               <Check className="w-4 h-4 text-green-700" />
+                               Correct answer: <span className="font-medium">{q.correctAnswer}</span>
+                            </p>
+                        )}
+                    </div>
+                )
+            })}
+          </div>
+          
+          <div className="flex justify-center gap-2 pt-4">
             <Button onClick={resetQuiz}><RotateCcw className="mr-2" /> Try Again</Button>
             <Button asChild><Link href="/academy">Back to Course</Link></Button>
           </div>
