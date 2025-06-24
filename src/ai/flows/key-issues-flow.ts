@@ -8,13 +8,12 @@
  */
 
 import { ai } from '@/ai/genkit';
-import type { FinancialData } from '@/data/financials';
 import { z } from 'zod';
 
 const KeyIssuesInputSchema = z.object({
   stockSymbol: z.string(),
   stockName: z.string(),
-  financials: z.any().describe("JSON object of the company's financial data over 5 years."),
+  financialsJson: z.string().describe("JSON string of the company's financial data over 5 years."),
   newsHeadlines: z.array(z.string()).describe("Recent news headlines related to the company or its sector."),
 });
 export type KeyIssuesInput = z.infer<typeof KeyIssuesInputSchema>;
@@ -39,7 +38,7 @@ const prompt = ai.definePrompt({
   prompt: `You are a senior financial risk analyst. Your task is to identify the top 2-3 key issues, risks, or concerns for a company based on its financial data and recent news.
 
 Analyze the following information for {{stockName}} ({{stockSymbol}}):
-- **Financials:** {{json stringify=financials}}
+- **Financials:** {{{financialsJson}}}
 - **Recent News:**
 {{#each newsHeadlines}}
   - {{{this}}}

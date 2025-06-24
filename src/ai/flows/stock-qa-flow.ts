@@ -8,13 +8,12 @@
  */
 
 import { ai } from '@/ai/genkit';
-import type { FinancialData } from '@/data/financials';
 import { z } from 'zod';
 
 const StockQaInputSchema = z.object({
   stockName: z.string(),
   question: z.string().describe("The user's question about the company."),
-  financials: z.any().describe("JSON object of the company's financial data over 5 years."),
+  financialsJson: z.string().describe("JSON string of the company's financial data over 5 years."),
   newsHeadlines: z.array(z.string()).describe("Recent news headlines related to the company or its sector."),
 });
 export type StockQaInput = z.infer<typeof StockQaInputSchema>;
@@ -36,7 +35,7 @@ const prompt = ai.definePrompt({
   prompt: `You are a helpful AI financial assistant specializing in {{stockName}}. Your goal is to answer the user's question accurately and concisely based *only* on the context provided below. Do not use any external knowledge. If the answer cannot be found in the context, say "I do not have enough information to answer that question."
 
 **Context:**
-1.  **Financial Data:** {{json stringify=financials}}
+1.  **Financial Data:** {{{financialsJson}}}
 2.  **Recent News Headlines:**
 {{#each newsHeadlines}}
     - {{{this}}}
