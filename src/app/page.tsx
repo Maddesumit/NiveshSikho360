@@ -189,7 +189,7 @@ const LandingPage = () => {
                         <h3 className="text-3xl font-bold font-headline">Sumit Madde</h3>
                         <p className="text-primary font-semibold mt-1">Developer & Idea Seeder</p>
                         <p className="mt-4 text-muted-foreground">
-                            Sumit is a passionate 3rd-year engineering student with a deep-seated enthusiasm for technology and finance. Driven by a desire to build innovative solutions that solve real-world problems, he developed NiveshSikho360 to demystify the stock market for young Indians. His excitement for creating new things and his commitment to financial literacy are the cornerstones of this project.
+                            I'm a passionate third-year engineering student with a deep interest in both technology and finance. Driven by the desire to build solutions that solve real-world problems, I created NiveshSikho360 to simplify and demystify the stock market for young Indians. My love for innovation and commitment to financial literacy are at the core of everything I do.
                         </p>
                         <div className="mt-6 flex justify-center md:justify-start gap-4">
                             <a href="https://www.linkedin.com/in/sumit-madde-198743249/" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ variant: "outline", size: "icon" }))}>
