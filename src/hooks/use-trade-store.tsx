@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect } from "react";
 import type { Stock } from "@/data/stocks";
 import { getStocks } from "@/data/stocks";
 
@@ -105,28 +105,60 @@ const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
 
 type NiveshContextType = {
   state: NiveshState;
-  dispatch: React.Dispatch<Action>;
+  dispatch: (action: Action) => void;
   getHolding: (symbol: string) => Holding | undefined;
   getStockPrice: (symbol: string) => number;
+  stocks: Stock[];
 };
 
 const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(niveshReducer, initialState);
+  const [stocks, setStocks] = useState(() => getStocks());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStocks(prevStocks =>
+        prevStocks.map(stock => {
+          const changePercent = (Math.random() - 0.5) * 0.01; // Fluctuate by +/- 0.5%
+          const newPrice = Math.max(0.01, stock.price * (1 + changePercent));
+          const newHistory = [...stock.history.slice(1), { date: '', price: newPrice }];
+          
+          return {
+            ...stock,
+            price: parseFloat(newPrice.toFixed(2)),
+            change: newPrice - stock.close,
+            changePercent: ((newPrice - stock.close) / stock.close) * 100,
+            history: newHistory,
+          };
+        })
+      );
+    }, 3000); // Update every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const executeTrade = useCallback((action: Action) => {
+    const latestStock = stocks.find(s => s.symbol === action.payload.stock.symbol);
+    if (latestStock) {
+      dispatch({ ...action, payload: { ...action.payload, stock: latestStock } });
+    } else {
+      console.error("Could not find latest stock data for trade.");
+    }
+  }, [stocks]);
 
   const getHolding = useCallback((symbol: string) => {
     return state.holdings.find(h => h.stock.symbol === symbol);
   }, [state.holdings]);
 
   const getStockPrice = useCallback((symbol: string) => {
-    // In a real app, this would fetch the latest price. Here we use the mock data.
-    const stock = getStocks().find(s => s.symbol === symbol);
+    const stock = stocks.find(s => s.symbol === symbol);
     return stock?.price ?? 0;
-  }, []);
+  }, [stocks]);
 
   return (
-    <NiveshContext.Provider value={{ state, dispatch, getHolding, getStockPrice }}>
+    <NiveshContext.Provider value={{ state, dispatch: executeTrade, getHolding, getStockPrice, stocks }}>
       {children}
     </NiveshContext.Provider>
   );

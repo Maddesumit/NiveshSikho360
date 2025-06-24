@@ -1,26 +1,23 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { Stock } from "@/data/stocks";
 import { StockCard } from "./stock-card";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
+import { useNiveshStore } from "@/hooks/use-trade-store";
 
-export default function DashboardClient({
-  initialStocks,
-}: {
-  initialStocks: Stock[];
-}) {
+export default function DashboardClient() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { stocks } = useNiveshStore();
 
   const filteredStocks = useMemo(() => {
-    if (!searchTerm) return initialStocks;
-    return initialStocks.filter(
+    if (!searchTerm) return stocks;
+    return stocks.filter(
       (stock) =>
         stock.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         stock.symbol.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, initialStocks]);
+  }, [searchTerm, stocks]);
 
   return (
     <div className="space-y-4">
