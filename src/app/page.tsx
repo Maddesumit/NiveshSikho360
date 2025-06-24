@@ -103,25 +103,11 @@ const LandingPage = () => {
             <div className="container mx-auto px-4 max-w-screen-xl">
                 <div className="space-y-6 text-center max-w-4xl mx-auto">
                     <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
-                        India’s Most Realistic <span className="text-primary text-glow-primary">Stock Market Simulator</span>
+                        NiveshSikho360: India’s Ultimate <span className="text-primary text-glow-primary">Investment Learning Platform</span>
                     </h1>
                     <p className="text-lg text-muted-foreground">
-                        Start your trading journey with ₹1,00,000 in virtual cash. Practice real-time trading, build your portfolio, and gain the confidence to invest — without risking a single rupee.
+                        Practice with ₹1,00,000 virtual cash. Trade stocks. Simulate mutual funds. Build financial confidence.
                     </p>
-                     <div className="space-y-3 pt-2">
-                        <p className="flex items-center justify-center gap-2 text-lg">
-                            <span className="text-primary font-bold">👉</span>
-                            Simulate. Learn. Win.
-                        </p>
-                        <p className="flex items-center justify-center gap-2 text-lg">
-                           <span className="text-primary font-bold">🔐</span>
-                            No real money. All real learning.
-                        </p>
-                         <p className="flex items-center justify-center gap-2 text-lg">
-                           <span className="text-primary font-bold">📈</span>
-                            Powered by live Indian stock data.
-                        </p>
-                    </div>
                     <div className="pt-4">
                         <Link href="/signup" className={cn(buttonVariants({ size: "lg", className: "rounded-full" }))}>
                             Open an Account <ArrowRight className="ml-2" />
