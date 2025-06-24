@@ -5,8 +5,8 @@ import { NiveshProvider } from '@/hooks/use-trade-store';
 import AppLayout from '@/components/app-layout';
 
 export const metadata: Metadata = {
-  title: 'TradeVastu',
-  description: 'Virtual stock trading platform for Indian markets.',
+  title: 'NiveshSikho360',
+  description: 'Learn and practice stock trading with NiveshSikho360.',
 };
 
 export default function RootLayout({

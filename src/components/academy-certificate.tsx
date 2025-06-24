@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Award } from 'lucide-react';
-import { TradeVastuIcon } from "./icons";
+import { NiveshSikho360Icon } from "./icons";
 
 export default function AcademyCertificate({ topicTitle }: { topicTitle: string }) {
   return (
@@ -20,9 +20,9 @@ export default function AcademyCertificate({ topicTitle }: { topicTitle: string 
         
         <div className="flex justify-between items-center pt-6 border-t border-dashed">
             <div className="flex items-center gap-2">
-                <TradeVastuIcon className="w-8 h-8 text-accent" />
+                <NiveshSikho360Icon className="w-8 h-8 text-accent" />
                 <span className="font-headline font-semibold text-xl text-accent">
-                    TradeVastu Academy
+                    NiveshSikho360 Academy
                 </span>
             </div>
             <p className="text-sm text-muted-foreground">Issued on: {new Date().toLocaleDateString()}</p>

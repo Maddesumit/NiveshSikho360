@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, BookText, Brain, CheckCircle, RotateCcw, XCircle, FileText } from 'lucide-react';
+import { ArrowRight, BookText, Brain, RotateCcw, FileText } from 'lucide-react';
 import AcademyCertificate from './academy-certificate';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 // Quiz Component
 const Quiz = ({ topic, onQuizComplete }: { topic: AcademyTopic, onQuizComplete: (isPassed: boolean) => void }) => {
