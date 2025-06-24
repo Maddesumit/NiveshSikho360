@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { NiveshSikho360Icon } from '@/components/icons';
-import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Bitcoin, Hexagon, MoveRight, ArrowRight } from 'lucide-react';
+import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Bitcoin, Hexagon, MoveRight, ArrowRight, UserPlus, CandlestickChart } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -131,6 +131,45 @@ const LandingPage = () => {
             </div>
         </section>
 
+        <section className="py-20 md:py-28 section-glow">
+            <div className="container max-w-screen-xl mx-auto px-4 relative text-center">
+                <h2 className="text-3xl md:text-4xl font-bold font-headline">Get Started in 30 Seconds with ₹1,00,000</h2>
+                <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                  Follow these simple steps to begin your zero-risk trading journey.
+                </p>
+                <div className="mt-16 grid gap-8 md:grid-cols-3">
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 text-primary mb-4">
+                      <UserPlus className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-xl font-headline font-semibold">1. Create Account</h3>
+                    <p className="mt-2 text-muted-foreground">Sign up for a free account in under a minute. No credit card required.</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 text-primary mb-4">
+                      <Banknote className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-xl font-headline font-semibold">2. Receive Virtual Cash</h3>
+                    <p className="mt-2 text-muted-foreground">Instantly get ₹1,00,000 in virtual currency credited to your new account.</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 text-primary mb-4">
+                      <CandlestickChart className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-xl font-headline font-semibold">3. Start Trading</h3>
+                    <p className="mt-2 text-muted-foreground">Use your virtual funds to buy and sell stocks in our hyper-realistic simulator.</p>
+                  </div>
+                </div>
+                <div className="mt-12">
+                  <Button asChild size="lg" className="rounded-full">
+                    <Link href="/signup">
+                      Claim Your Virtual Cash <ArrowRight className="ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+            </div>
+        </section>
+
         <section id="features" className="py-20 md:py-28 section-glow">
             <div className="container max-w-screen-xl mx-auto px-4 relative">
                 <div className="text-center max-w-3xl mx-auto">
@@ -236,7 +275,7 @@ const LandingPage = () => {
                                 <h3 className="text-2xl font-bold font-headline">Sumit Madde</h3>
                                 <p className="text-primary font-semibold mt-1">Turning Code &amp; Curiosity Into Real-World Solutions</p>
                                 <p className="mt-4 text-muted-foreground">
-                                    I'm a passionate third-year engineering student with a deep interest in both technology and finance. Driven by the desire to build solutions that solve real-world problems, I created NiveshSikho360 to simplify and demystify the stock market for young Indians.
+                                    I'm a passionate third-year engineering student with a deep interest in both technology and finance. Driven by the desire to build solutions that solve real-world problems, I created NiveshSikho360 to simplify and demystify the stock market for young Indians. My love for innovation and commitment to financial literacy are at the core of everything I do.
                                 </p>
                                 <div className="mt-6 flex justify-center md:justify-start gap-4">
                                     <a href="https://www.linkedin.com/in/sumit-madde-198743249/" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ variant: "outline", size: "icon" }))}>
