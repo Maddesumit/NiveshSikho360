@@ -115,9 +115,16 @@ const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(niveshReducer, initialState);
-  const [stocks, setStocks] = useState(() => getStocks());
+  const [stocks, setStocks] = useState<Stock[]>([]);
 
   useEffect(() => {
+    // Initialize stocks on the client side to avoid hydration mismatch
+    setStocks(getStocks());
+  }, []);
+
+  useEffect(() => {
+    if (stocks.length === 0) return; // Don't start interval if there are no stocks
+
     const interval = setInterval(() => {
       setStocks(prevStocks =>
         prevStocks.map(stock => {
@@ -137,7 +144,7 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
     }, 3000); // Update every 3 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [stocks.length]);
 
   const executeTrade = useCallback((action: Action) => {
     const latestStock = stocks.find(s => s.symbol === action.payload.stock.symbol);
