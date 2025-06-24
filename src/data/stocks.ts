@@ -14,14 +14,31 @@ export type Stock = {
   history: { date: string; price: number }[];
 };
 
-// Generates ~5 years of daily stock data
-const generateHistory = (basePrice: number) => {
+// Create a simple deterministic pseudo-random number generator seeded by a string.
+// This ensures that for the same stock symbol, we get the same "random" history.
+const pseudoRandomGenerator = (seedStr: string) => {
+  let h = 1779033703, i, c;
+  for (i = 0; i < seedStr.length; i++) {
+    c = seedStr.charCodeAt(i);
+    h = (h << 5) + h + c;
+    h = h & h; // Convert to 32bit integer
+  }
+  return () => {
+    h = Math.sin(h) * 10000;
+    return h - Math.floor(h); // Return a float between 0 and 1
+  };
+};
+
+
+// Generates ~5 years of daily stock data deterministically
+const generateHistory = (symbol: string, basePrice: number) => {
+  const rand = pseudoRandomGenerator(symbol);
   const history = [];
   const today = new Date();
   const fiveYearsAgo = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
   
-  // Start price 5 years ago is some random fraction of the base price
-  let currentPrice = basePrice / (1.5 + Math.random() * 2); 
+  // Start price 5 years ago is some "random" fraction of the base price
+  let currentPrice = basePrice / (1.5 + rand() * 2); 
 
   // Calculate the daily growth factor needed to reach the basePrice in 5 years
   const days = (today.getTime() - fiveYearsAgo.getTime()) / (1000 * 3600 * 24);
@@ -37,8 +54,8 @@ const generateHistory = (basePrice: number) => {
       price: parseFloat(currentPrice.toFixed(2)),
     });
     
-    // Apply the growth factor with some random volatility
-    const volatility = 1 + (Math.random() - 0.5) * 0.06; // +/- 3% volatility
+    // Apply the growth factor with some "random" volatility
+    const volatility = 1 + (rand() - 0.5) * 0.06; // +/- 3% volatility
     currentPrice *= dailyGrowthFactor * volatility;
   }
   
@@ -129,7 +146,7 @@ let stocksBySymbol: Map<string, Stock> | null = null;
 const initializeStocks = () => {
   if (!allStocks) {
     const generatedStocks = stocksData.map(stock => {
-      const history = generateHistory(stock.price);
+      const history = generateHistory(stock.symbol, stock.price);
       const stats = calculateStats(stock.price, history);
       return { ...stock, ...stats, history };
     });
