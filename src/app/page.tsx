@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { NiveshSikho360Icon } from '@/components/icons';
-import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Award, Home, Repeat, Bitcoin, FileText, BarChartHorizontalBig } from 'lucide-react';
+import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Bitcoin } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -76,55 +76,6 @@ const futurePlans: FuturePlan[] = [
     tags: ["Diversification", "Low-Cost"],
   },
   {
-    title: "Fixed Deposits (FDs)",
-    description: [
-      "Simulate FD investments with custom principal amounts and durations.",
-      "Show maturity values, comparing simple vs. compounding interest.",
-      "Teach about tax implications, premature withdrawals, and bank interest rates.",
-    ],
-    icon: Banknote,
-    tags: ["Fixed Income", "Savings"],
-  },
-  {
-    title: "Gold Investment Simulation",
-    description: [
-      "Simulate investments in Gold ETFs, Sovereign Gold Bonds (SGBs), and physical gold.",
-      "Include a real-time gold price tracker.",
-      "Educate on gold's role as an inflation hedge versus its volatility.",
-    ],
-    icon: Award,
-    tags: ["Commodity", "Inflation Hedge"],
-  },
-  {
-    title: "Real Estate Simulated Investment",
-    description: [
-      "Simulate investments in REITs and fractional ownership.",
-      "Track virtual real estate with appreciation trends using mock data for metro cities.",
-    ],
-    icon: Home,
-    tags: ["Real Estate", "REITs"],
-  },
-  {
-    title: "Recurring Deposits (RDs)",
-    description: [
-      "Set up virtual monthly deposits with different tenures.",
-      "Show maturity values and interest earned.",
-      "Compare the performance and utility of RDs against SIPs and FDs.",
-    ],
-    icon: Repeat,
-    tags: ["Savings", "Fixed Income"],
-  },
-  {
-    title: "PPF/EPF Simulation",
-    description: [
-      "Simulate annual investments into Public Provident Fund (PPF).",
-      "Illustrate lock-in periods, the power of compounding, and tax benefits.",
-      "Position as a long-term wealth creation tool.",
-    ],
-    icon: ShieldCheck,
-    tags: ["Retirement", "Tax-Saving"],
-  },
-  {
     title: "Crypto Simulation (Optional)",
     description: [
       "A purely educational virtual crypto trading simulator with INR conversion.",
@@ -133,25 +84,6 @@ const futurePlans: FuturePlan[] = [
     ],
     icon: Bitcoin,
     tags: ["High-Risk", "Crypto", "Educational"],
-  },
-  {
-    title: "Bonds & Debentures",
-    description: [
-      "Simulate buying corporate bonds and government securities.",
-      "Educate on coupon rates, maturity dates, and understanding credit ratings.",
-    ],
-    icon: FileText,
-    tags: ["Fixed Income", "Debt"],
-  },
-  {
-    title: "Options Trading (Advanced Module)",
-    description: [
-      "An advanced module featuring a virtual Options Chain for Nifty & BankNifty.",
-      "Simulate buying Calls/Puts with virtual premiums.",
-      "Include visualizers for payoff charts and option greeks.",
-    ],
-    icon: BarChartHorizontalBig,
-    tags: ["Advanced", "Derivatives", "High-Risk"],
   },
 ];
 
@@ -396,5 +328,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-    
