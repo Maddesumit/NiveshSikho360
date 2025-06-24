@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 
 export type Stock = {
   symbol: string;
@@ -34,37 +34,29 @@ const pseudoRandomGenerator = (seedStr: string) => {
 const generateHistory = (symbol: string, basePrice: number) => {
   const rand = pseudoRandomGenerator(symbol);
   const history = [];
-  const today = new Date();
-  const fiveYearsAgo = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
-  
-  // Start price 5 years ago is some "random" fraction of the base price
-  let currentPrice = basePrice / (1.5 + rand() * 2); 
+  // Use a fixed end date to avoid hydration issues with new Date()
+  const endDate = new Date('2024-07-26T12:00:00Z');
+  const daysToGenerate = 5 * 365;
 
-  // Calculate the daily growth factor needed to reach the basePrice in 5 years
-  const days = (today.getTime() - fiveYearsAgo.getTime()) / (1000 * 3600 * 24);
-  const totalGrowth = basePrice / currentPrice;
-  const dailyGrowthFactor = Math.pow(totalGrowth, 1 / days);
-
-  for (let d = new Date(fiveYearsAgo); d <= today; d.setDate(d.getDate() + 1)) {
-    // Skip weekends
-    if (d.getDay() === 0 || d.getDay() === 6) continue;
-
+  let price = basePrice;
+  // Generate prices backwards from the end date
+  for (let i = 0; i < daysToGenerate; i++) {
+    const date = subDays(endDate, i);
+    if (date.getDay() === 0 || date.getDay() === 6) {
+      continue; // Skip weekends
+    }
     history.push({
-      date: format(d, 'MMM dd, yyyy'),
-      price: parseFloat(currentPrice.toFixed(2)),
+      date: format(date, 'MMM dd, yyyy'),
+      price: parseFloat(price.toFixed(2)),
     });
-    
-    // Apply the growth factor with some "random" volatility
-    const volatility = 1 + (rand() - 0.5) * 0.06; // +/- 3% volatility
-    currentPrice *= dailyGrowthFactor * volatility;
-  }
-  
-  // Ensure the last price in history matches the current price
-  if (history.length > 0) {
-      history[history.length - 1].price = basePrice;
+    // Adjust the price for the previous day with some "random" volatility
+    // A little upward drift is introduced by using 0.495 instead of 0.5
+    const volatility = 1 + (rand() - 0.495) * 0.06;
+    price /= volatility; // Go backwards, so divide
   }
 
-  return history;
+  // The history is generated backwards, so we need to reverse it
+  return history.reverse();
 };
 
 const calculateStats = (price: number, history: { date: string; price: number }[]) => {

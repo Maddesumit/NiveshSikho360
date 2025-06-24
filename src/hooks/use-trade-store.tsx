@@ -116,12 +116,7 @@ const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(niveshReducer, initialState);
-  const [stocks, setStocks] = useState<Stock[]>([]);
-
-  useEffect(() => {
-    // Initialize stocks on the client side to avoid hydration mismatch
-    setStocks(getStocks());
-  }, []);
+  const [stocks, setStocks] = useState<Stock[]>(() => getStocks());
 
   useEffect(() => {
     if (stocks.length === 0) return; // Don't start interval if there are no stocks
