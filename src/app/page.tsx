@@ -197,40 +197,6 @@ const LandingPage = () => {
         </section>
         
         <section className="py-20 md:py-28 bg-card/50 section-glow">
-            <div className="container max-w-screen-xl mx-auto px-4">
-                 <div className="text-center max-w-3xl mx-auto">
-                    <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">Made for Everyone</Badge>
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">AI-Powered Insights for Smarter Decisions</h2>
-                    <p className="text-lg text-muted-foreground mt-4">
-                        Leverage the power of generative AI to get personalized trade recommendations, news sentiment analysis, and answers to your stock questions from our advanced financial engine.
-                    </p>
-                    <Button asChild className="rounded-full mt-6">
-                        <Link href="/signup">
-                            Get Started <MoveRight className="ml-2"/>
-                        </Link>
-                    </Button>
-                </div>
-            </div>
-        </section>
-
-        <section className="py-20 md:py-28 section-glow">
-             <div className="container max-w-screen-xl mx-auto px-4">
-                 <div className="text-center max-w-3xl mx-auto">
-                    <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">One Platform</Badge>
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">Structured Learning, From Zero to Hero</h2>
-                    <p className="text-lg text-muted-foreground mt-4">
-                       Our structured Academy takes you from the very basics to advanced trading concepts. Learn with interactive modules, test your knowledge with quizzes, and earn a certificate to showcase your skills.
-                    </p>
-                    <Button asChild className="rounded-full mt-6">
-                        <Link href="/academy">
-                            Start Learning <MoveRight className="ml-2"/>
-                        </Link>
-                    </Button>
-                </div>
-            </div>
-        </section>
-        
-        <section className="py-20 md:py-28 bg-card/50 section-glow">
             <div className="container max-w-screen-xl mx-auto px-4 relative text-center">
                  <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Ambitious Roadmap</h2>
                  <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
