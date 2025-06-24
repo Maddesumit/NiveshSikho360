@@ -24,6 +24,7 @@ import {
   Newspaper,
   BookOpen,
   HelpCircle,
+  Rocket,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useNiveshStore } from "@/hooks/use-trade-store";
@@ -45,6 +46,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/news", label: "Market News", icon: Newspaper },
     { href: "/academy", label: "Academy", icon: BookOpen },
     { href: "/glossary", label: "Glossary", icon: HelpCircle },
+    { href: "/future-plans", label: "Future Plans", icon: Rocket },
   ];
 
   return (
