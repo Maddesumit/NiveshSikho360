@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export type Stock = {
   symbol: string;
   name: string;
@@ -12,26 +14,51 @@ export type Stock = {
   history: { date: string; price: number }[];
 };
 
+// Generates ~5 years of daily stock data
 const generateHistory = (basePrice: number) => {
   const history = [];
-  let currentPrice = basePrice * (0.95 + Math.random() * 0.1); // Start within a 5-15% range of the base price
-  for (let i = 0; i < 60; i++) {
+  const today = new Date();
+  const fiveYearsAgo = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+  
+  // Start price 5 years ago is some random fraction of the base price
+  let currentPrice = basePrice / (1.5 + Math.random() * 2); 
+
+  // Calculate the daily growth factor needed to reach the basePrice in 5 years
+  const days = (today.getTime() - fiveYearsAgo.getTime()) / (1000 * 3600 * 24);
+  const totalGrowth = basePrice / currentPrice;
+  const dailyGrowthFactor = Math.pow(totalGrowth, 1 / days);
+
+  for (let d = new Date(fiveYearsAgo); d <= today; d.setDate(d.getDate() + 1)) {
+    // Skip weekends
+    if (d.getDay() === 0 || d.getDay() === 6) continue;
+
     history.push({
-      date: `Day ${i + 1}`,
+      date: format(d, 'MMM dd, yyyy'),
       price: parseFloat(currentPrice.toFixed(2)),
     });
-    currentPrice *= 1 + (Math.random() - 0.49) * 0.08; // Fluctuate price daily
+    
+    // Apply the growth factor with some random volatility
+    const volatility = 1 + (Math.random() - 0.5) * 0.06; // +/- 3% volatility
+    currentPrice *= dailyGrowthFactor * volatility;
   }
-  // ensure last price in history matches current price
-  history[history.length - 1].price = basePrice;
+  
+  // Ensure the last price in history matches the current price
+  if (history.length > 0) {
+      history[history.length - 1].price = basePrice;
+  }
+
   return history;
 };
 
 const calculateStats = (price: number, history: { date: string; price: number }[]) => {
+  if (history.length < 2) {
+    return { open: price, high: price, low: price, close: price, change: 0, changePercent: 0 };
+  }
   const open = history[0].price;
   const close = history[history.length - 2]?.price || open;
-  const high = Math.max(...history.map(p => p.price));
-  const low = Math.min(...history.map(p => p.price));
+  const sixtyDayHistory = history.slice(-60);
+  const high = Math.max(...sixtyDayHistory.map(p => p.price));
+  const low = Math.min(...sixtyDayHistory.map(p => p.price));
   const change = price - close;
   const changePercent = (change / close) * 100;
   return { open, high, low, close, change, changePercent };
@@ -62,15 +89,15 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "JSWSTEEL", name: "JSW Steel Ltd", sector: "Materials", price: 910.40 },
   { symbol: "NTPC", name: "NTPC Ltd", sector: "Utilities", price: 360.55 },
   { symbol: "ADANIENT", name: "Adani Enterprises Ltd", sector: "Conglomerate", price: 3250.00 },
-  { symbol: "ADANIPORTS", name: "Adani Ports & SEZ Ltd", sector: "Industrials", price: 1350.10 },
+  { symbol: "ADANIPORTS", name: "Adani Ports &amp; SEZ Ltd", sector: "Industrials", price: 1350.10 },
   { symbol: "ULTRACEMCO", name: "UltraTech Cement Ltd", sector: "Materials", price: 10800.00 },
   { symbol: "ASIANPAINT", name: "Asian Paints Ltd", sector: "Materials", price: 2890.60 },
   { symbol: "AXISBANK", name: "Axis Bank Ltd", sector: "Financials", price: 1225.00 },
   { symbol: "BAJAJFINSV", name: "Bajaj Finserv Ltd", sector: "Financials", price: 1580.90 },
-  { symbol: "M_M", name: "Mahindra & Mahindra Ltd", sector: "Automobile", price: 2850.40 },
+  { symbol: "M_M", name: "Mahindra &amp; Mahindra Ltd", sector: "Automobile", price: 2850.40 },
   { symbol: "TITAN", name: "Titan Company Ltd", sector: "Consumer Discretionary", price: 3500.75 },
   { symbol: "POWERGRID", name: "Power Grid Corp of India", sector: "Utilities", price: 325.10 },
-  { symbol: "ONGC", name: "Oil & Natural Gas Corp", sector: "Energy", price: 268.50 },
+  { symbol: "ONGC", name: "Oil &amp; Natural Gas Corp", sector: "Energy", price: 268.50 },
   { symbol: "BAJAJ-AUTO", name: "Bajaj Auto Ltd", sector: "Automobile", price: 9700.00 },
   { symbol: "INDUSINDBK", name: "IndusInd Bank Ltd", sector: "Financials", price: 1490.80 },
   { symbol: "HINDALCO", name: "Hindalco Industries Ltd", sector: "Materials", price: 650.20 },
@@ -85,7 +112,7 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "PIDILITIND", name: "Pidilite Industries Ltd", sector: "Materials", price: 3100.80 },
   { symbol: "HAVELLS", name: "Havells India Ltd", sector: "Industrials", price: 1890.75 },
   { symbol: "ZOMATO", name: "Zomato Ltd", sector: "Consumer Discretionary", price: 190.45 },
-  { symbol: "IRCTC", name: "Indian Railway Catering & Tour", sector: "Consumer Discretionary", price: 1015.20 },
+  { symbol: "IRCTC", name: "Indian Railway Catering &amp; Tour", sector: "Consumer Discretionary", price: 1015.20 },
   
   // Small-Cap Stocks
   { symbol: "IEX", name: "Indian Energy Exchange Ltd", sector: "Financials", price: 178.60 },
@@ -96,15 +123,27 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "IDEA", name: "Vodafone Idea Ltd", sector: "Communication Services", price: 17.05 },
 ];
 
-let stocks: Stock[] | null = null;
+let allStocks: Stock[] | null = null;
+let stocksBySymbol: Map<string, Stock> | null = null;
 
-export const getStocks = (): Stock[] => {
-  if (!stocks) {
-    stocks = stocksData.map(stock => {
+const initializeStocks = () => {
+  if (!allStocks) {
+    const generatedStocks = stocksData.map(stock => {
       const history = generateHistory(stock.price);
       const stats = calculateStats(stock.price, history);
       return { ...stock, ...stats, history };
     });
+    allStocks = generatedStocks;
+    stocksBySymbol = new Map(generatedStocks.map(stock => [stock.symbol, stock]));
   }
-  return stocks;
+};
+
+export const getStocks = (): Stock[] => {
+  initializeStocks();
+  return allStocks!;
+};
+
+export const getStockBySymbol = (symbol: string): Stock | undefined => {
+  initializeStocks();
+  return stocksBySymbol!.get(symbol);
 };

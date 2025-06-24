@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import type { Stock } from "@/data/stocks";
+import Link from 'next/link';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -15,14 +14,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { ArrowUp, ArrowDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import TradeDialog from "./trade-dialog";
 
 export function StockCard({ stock }: { stock: Stock }) {
-  const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
   const isPositive = stock.change >= 0;
 
   const chartColor = isPositive
@@ -36,9 +32,11 @@ export function StockCard({ stock }: { stock: Stock }) {
     },
   };
 
+  const sixtyDayHistory = stock.history.slice(-60);
+
   return (
-    <>
-      <Card className="flex flex-col">
+    <Link href={`/stock/${stock.symbol}`} className="flex">
+      <Card className="flex flex-col w-full hover:border-primary/50 transition-colors shadow-md hover:shadow-primary/10">
         <CardHeader>
           <CardTitle className="flex justify-between items-center font-headline">
             <span>{stock.symbol}</span>
@@ -69,7 +67,7 @@ export function StockCard({ stock }: { stock: Stock }) {
             <ChartContainer config={chartConfig} className="h-full w-full">
               <AreaChart
                 accessibilityLayer
-                data={stock.history}
+                data={sixtyDayHistory}
                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
               >
                 <defs>
@@ -79,10 +77,10 @@ export function StockCard({ stock }: { stock: Stock }) {
                   </linearGradient>
                 </defs>
                 <YAxis domain={['dataMin - 5', 'dataMax + 5']} hide={true} />
-                <XAxis dataKey="date" hide={true}/>
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="line" />}
+                  formatter={(value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value) }
                 />
                 <Area
                   dataKey="price"
@@ -95,21 +93,7 @@ export function StockCard({ stock }: { stock: Stock }) {
             </ChartContainer>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button
-            className="w-full"
-            variant="outline"
-            onClick={() => setTradeDialogOpen(true)}
-          >
-            Trade
-          </Button>
-        </CardFooter>
       </Card>
-      <TradeDialog
-        stock={stock}
-        isOpen={isTradeDialogOpen}
-        onOpenChange={setTradeDialogOpen}
-      />
-    </>
+    </Link>
   );
 }

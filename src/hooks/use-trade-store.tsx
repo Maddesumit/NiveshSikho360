@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect } from "react";
 import type { Stock } from "@/data/stocks";
-import { getStocks } from "@/data/stocks";
+import { getStocks, getStockBySymbol } from "@/data/stocks";
 
 type Holding = {
   stock: Stock;
@@ -109,6 +109,7 @@ type NiveshContextType = {
   getHolding: (symbol: string) => Holding | undefined;
   getStockPrice: (symbol: string) => number;
   stocks: Stock[];
+  getStock: (symbol: string) => Stock | undefined;
 };
 
 const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
@@ -130,14 +131,12 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
         prevStocks.map(stock => {
           const changePercent = (Math.random() - 0.5) * 0.01; // Fluctuate by +/- 0.5%
           const newPrice = Math.max(0.01, stock.price * (1 + changePercent));
-          const newHistory = [...stock.history.slice(1), { date: '', price: newPrice }];
           
           return {
             ...stock,
             price: parseFloat(newPrice.toFixed(2)),
             change: newPrice - stock.close,
             changePercent: ((newPrice - stock.close) / stock.close) * 100,
-            history: newHistory,
           };
         })
       );
@@ -151,7 +150,12 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
     if (latestStock) {
       dispatch({ ...action, payload: { ...action.payload, stock: latestStock } });
     } else {
-      console.error("Could not find latest stock data for trade.");
+        const initialStock = getStockBySymbol(action.payload.stock.symbol);
+         if (initialStock) {
+            dispatch({ ...action, payload: { ...action.payload, stock: initialStock } });
+         } else {
+            console.error("Could not find latest stock data for trade.");
+         }
     }
   }, [stocks]);
 
@@ -161,11 +165,16 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
 
   const getStockPrice = useCallback((symbol: string) => {
     const stock = stocks.find(s => s.symbol === symbol);
-    return stock?.price ?? 0;
+    return stock?.price ?? getStockBySymbol(symbol)?.price ?? 0;
+  }, [stocks]);
+
+  const getStock = useCallback((symbol: string) => {
+    const liveStock = stocks.find(s => s.symbol === symbol);
+    return liveStock ?? getStockBySymbol(symbol);
   }, [stocks]);
 
   return (
-    <NiveshContext.Provider value={{ state, dispatch: executeTrade, getHolding, getStockPrice, stocks }}>
+    <NiveshContext.Provider value={{ state, dispatch: executeTrade, getHolding, getStockPrice, stocks, getStock }}>
       {children}
     </NiveshContext.Provider>
   );
