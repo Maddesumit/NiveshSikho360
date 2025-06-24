@@ -78,9 +78,9 @@ Guidelines for recommendations:
     *   'Sector Diversification': Suggest if the user is over-concentrated in one sector.
     *   'Growth Opportunity': Identify stocks with strong upward momentum or in a trending sector.
     *   'Value Play': Identify stocks that seem undervalued compared to their peers or historical data.
-    *   'Profit Taking'/'Loss Cutting': For SELL recommendations, consider if a stock is overvalued or if it's wise to cut losses.
+    *   'Profit Taking': For SELL recommendations, consider if a stock is overvalued.
 2.  **Cash Utilization:** For BUY recommendations, ensure the user has enough cash. Suggest reasonable quantities.
-3.  **Reasoning:** The 'reason' is crucial. It should be educational, mentioning concepts like momentum, valuation, or sector trends in simple terms.
+3.  **Reasoning (Explainability):** The 'reason' is crucial. It must be a single, insightful sentence that sounds like an expert observation. For example: "The stock recently broke its 50-day moving average on high volume," or "Showing strong relative strength against its sector peers."
 
 Generate the recommendations now.`,
 });

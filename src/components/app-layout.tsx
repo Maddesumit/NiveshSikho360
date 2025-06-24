@@ -21,6 +21,7 @@ import {
   PieChart,
   Wallet,
   Github,
+  Newspaper,
 } from "lucide-react";
 import { NiveshSitu360Icon } from "@/components/icons";
 import { useNiveshStore } from "@/hooks/use-trade-store";
@@ -33,6 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
+    { href: "/news", label: "Market News", icon: Newspaper },
   ];
 
   return (

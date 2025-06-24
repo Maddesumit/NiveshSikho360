@@ -14,13 +14,13 @@ export type Stock = {
 
 const generateHistory = (basePrice: number) => {
   const history = [];
-  let currentPrice = basePrice * (0.9 + Math.random() * 0.1);
-  for (let i = 0; i < 30; i++) {
+  let currentPrice = basePrice * (0.95 + Math.random() * 0.1); // Start within a 5-15% range of the base price
+  for (let i = 0; i < 60; i++) {
     history.push({
       date: `Day ${i + 1}`,
       price: parseFloat(currentPrice.toFixed(2)),
     });
-    currentPrice *= 1 + (Math.random() - 0.48) * 0.1; // Fluctuate price
+    currentPrice *= 1 + (Math.random() - 0.49) * 0.08; // Fluctuate price daily
   }
   // ensure last price in history matches current price
   history[history.length - 1].price = basePrice;

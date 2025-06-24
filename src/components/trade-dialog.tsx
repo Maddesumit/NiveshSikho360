@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Stock } from "@/data/stocks";
+import { getNews } from "@/data/news";
+import { getTradeForecast, TradeForecastOutput } from "@/ai/flows/trade-forecast-flow";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -16,6 +18,45 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Rocket, TrendingDown, TrendingUp } from "lucide-react";
+
+const ForecastDisplay = ({ stock, forecast, loading }: { stock: Stock; forecast: TradeForecastOutput | null; loading: boolean; }) => {
+  const formatCurrency = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+
+  if (loading) {
+    return (
+      <div className="space-y-2 mt-4">
+        <Skeleton className="h-5 w-1/3" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+      </div>
+    );
+  }
+
+  if (!forecast) return null;
+
+  return (
+    <div className="mt-4 p-3 rounded-lg bg-muted/50 text-sm">
+        <h4 className="font-semibold flex items-center gap-2 mb-2">
+          <Rocket className="w-4 h-4 text-primary" />
+          AI 7-Day Forecast
+        </h4>
+        <p className="text-muted-foreground italic mb-2">"{forecast.reasoning}"</p>
+        <div className="flex justify-between items-center">
+            <div className="text-center">
+                <p className="font-semibold text-red-600 flex items-center gap-1"><TrendingDown className="w-4 h-4" /> Worst Case</p>
+                <p>{formatCurrency(forecast.worstCase)}</p>
+            </div>
+            <div className="text-center">
+                 <p className="font-semibold text-green-600 flex items-center gap-1"><TrendingUp className="w-4 h-4" /> Best Case</p>
+                 <p>{formatCurrency(forecast.bestCase)}</p>
+            </div>
+        </div>
+    </div>
+  );
+};
+
 
 export default function TradeDialog({
   stock,
@@ -29,6 +70,41 @@ export default function TradeDialog({
   const { state, dispatch, getHolding } = useNiveshStore();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [forecast, setForecast] = useState<TradeForecastOutput | null>(null);
+  const [loadingForecast, setLoadingForecast] = useState(false);
+
+  useEffect(() => {
+    const fetchForecast = async () => {
+        if (!stock) return;
+        setLoadingForecast(true);
+        setForecast(null);
+        try {
+            const allNews = getNews();
+            const relevantNews = allNews
+                .filter(article => article.relatedStocks.includes(stock.symbol))
+                .map(article => article.headline);
+
+            const input = {
+                stockSymbol: stock.symbol,
+                stockName: stock.name,
+                currentPrice: stock.price,
+                priceHistory: stock.history.map(h => h.price),
+                relevantNews: relevantNews,
+            };
+            const result = await getTradeForecast(input);
+            setForecast(result);
+        } catch (error) {
+            console.error("Failed to fetch trade forecast:", error);
+            // Don't show an error to the user, just fail silently.
+        } finally {
+            setLoadingForecast(false);
+        }
+    };
+
+    if (isOpen) {
+      fetchForecast();
+    }
+  }, [isOpen, stock]);
 
   const holding = getHolding(stock.symbol);
 
@@ -105,6 +181,7 @@ export default function TradeDialog({
                 style: "currency",
                 currency: "INR",
                 }).format(totalCost)}</div>
+                 <ForecastDisplay stock={stock} forecast={forecast} loading={loadingForecast} />
             </div>
             <DialogFooter>
               <Button
@@ -134,6 +211,7 @@ export default function TradeDialog({
                 style: "currency",
                 currency: "INR",
                 }).format(totalCost)}</div>
+                 <ForecastDisplay stock={stock} forecast={forecast} loading={loadingForecast} />
             </div>
             <DialogFooter>
               <Button
