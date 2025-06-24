@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Stock } from '@/data/stocks';
 import type { FinancialData } from '@/data/financials';
 import type { NewsArticle } from '@/data/news';
@@ -85,7 +85,7 @@ const KeyIssues = ({ stock, financials, news }: { stock: Stock, financials: Fina
     const [issues, setIssues] = useState<KeyIssuesOutput['keyIssues'] | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useMemo(() => {
+    useEffect(() => {
         const fetchIssues = async () => {
             setLoading(true);
             try {
