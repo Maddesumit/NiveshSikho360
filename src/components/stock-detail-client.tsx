@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Stock } from '@/data/stocks';
 import type { FinancialData } from '@/data/financials';
 import type { NewsArticle } from '@/data/news';
@@ -42,7 +42,7 @@ const AiQuestion = ({ stock, financials, news }: { stock: Stock, financials: Fin
             setAnswer(result.answer);
         } catch (e) {
             console.error(e);
-            setAnswer("Sorry, I couldn't process that question right now.");
+            setAnswer("Sorry, I couldn't process that question right now. The API quota might be exceeded.");
         } finally {
             setLoading(false);
         }
@@ -83,28 +83,28 @@ const AiQuestion = ({ stock, financials, news }: { stock: Stock, financials: Fin
 
 const KeyIssues = ({ stock, financials, news }: { stock: Stock, financials: FinancialData, news: NewsArticle[] }) => {
     const [issues, setIssues] = useState<KeyIssuesOutput['keyIssues'] | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchIssues = async () => {
-            setLoading(true);
-            try {
-                const newsHeadlines = news.map(n => n.headline);
-                const result = await getKeyIssues({
-                    stockSymbol: stock.symbol,
-                    stockName: stock.name,
-                    financials: financials,
-                    newsHeadlines: newsHeadlines
-                });
-                setIssues(result.keyIssues);
-            } catch (e) {
-                console.error(e);
-                setIssues([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchIssues();
+    const fetchIssues = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        setIssues(null);
+        try {
+            const newsHeadlines = news.map(n => n.headline);
+            const result = await getKeyIssues({
+                stockSymbol: stock.symbol,
+                stockName: stock.name,
+                financials: financials,
+                newsHeadlines: newsHeadlines
+            });
+            setIssues(result.keyIssues);
+        } catch (e) {
+            console.error(e);
+            setError("Could not analyze key issues. The API quota may be exceeded.");
+        } finally {
+            setLoading(false);
+        }
     }, [stock, financials, news]);
 
     return (
@@ -118,6 +118,8 @@ const KeyIssues = ({ stock, financials, news }: { stock: Stock, financials: Fina
                         <Skeleton className="h-8 w-full" />
                         <Skeleton className="h-8 w-full" />
                     </div>
+                ) : error ? (
+                    <p className="text-destructive text-sm">{error}</p>
                 ) : issues && issues.length > 0 ? (
                     <ul className="space-y-4">
                         {issues.map((item, index) => (
@@ -127,8 +129,15 @@ const KeyIssues = ({ stock, financials, news }: { stock: Stock, financials: Fina
                             </li>
                         ))}
                     </ul>
-                ) : (
+                ) : issues ? (
                     <p className="text-muted-foreground text-sm">No significant issues identified by AI.</p>
+                ) : (
+                    <div className="text-center">
+                        <Button onClick={fetchIssues} disabled={loading}>
+                            <BrainCircuit className="mr-2 h-4 w-4" />
+                            Analyze Key Issues
+                        </Button>
+                    </div>
                 )}
             </CardContent>
         </Card>
