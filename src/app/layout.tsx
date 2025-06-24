@@ -5,7 +5,7 @@ import { NiveshProvider } from '@/hooks/use-trade-store';
 import AppLayout from '@/components/app-layout';
 
 export const metadata: Metadata = {
-  title: 'NiveshSitu360',
+  title: 'TradeVastu',
   description: 'Virtual stock trading platform for Indian markets.',
 };
 

@@ -22,8 +22,9 @@ import {
   Wallet,
   Github,
   Newspaper,
+  BookOpen,
 } from "lucide-react";
-import { NiveshSitu360Icon } from "@/components/icons";
+import { TradeVastuIcon } from "@/components/icons";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
     { href: "/news", label: "Market News", icon: Newspaper },
+    { href: "/academy", label: "Academy", icon: BookOpen },
   ];
 
   return (
@@ -42,9 +44,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <NiveshSitu360Icon className="w-8 h-8 text-primary" />
+            <TradeVastuIcon className="w-8 h-8 text-primary" />
             <span className="font-headline font-semibold text-xl text-primary">
-              NiveshSitu360
+              TradeVastu
             </span>
           </div>
         </SidebarHeader>
@@ -54,7 +56,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href}>
                   <SidebarMenuButton
-                    isActive={pathname === item.href}
+                    isActive={pathname.startsWith(item.href) && (item.href !== '/' || pathname === '/')}
                     tooltip={item.label}
                   >
                     <item.icon />
