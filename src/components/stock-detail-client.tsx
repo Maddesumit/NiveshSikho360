@@ -180,7 +180,7 @@ export default function StockDetailClient({ stock: initialStock, financials, rel
     // Get the live stock data from the store if available, otherwise use initial
     const stock = useMemo(() => {
         const liveStock = stocks.find(s => s.symbol === initialStock.symbol);
-        return liveStock ? { ...initialStock, price: liveStock.price, change: live-stock.change, changePercent: liveStock.changePercent } : initialStock;
+        return liveStock ? { ...initialStock, price: liveStock.price, change: liveStock.change, changePercent: liveStock.changePercent } : initialStock;
     }, [initialStock, stocks]);
 
     const isPositive = stock.change >= 0;
