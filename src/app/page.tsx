@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { NiveshSikho360Icon } from '@/components/icons';
-import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Bitcoin, Hexagon, MoveRight } from 'lucide-react';
+import { AreaChart, BrainCircuit, GraduationCap, PieChart, BookOpen, Rocket, ShieldCheck, Newspaper, Github, Linkedin, Mail, Banknote, TrendingUp, Layers, Bitcoin, Hexagon, MoveRight, ArrowRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -102,18 +102,29 @@ const LandingPage = () => {
         <section className="relative py-20 md:py-32">
              <div className="container max-w-screen-xl grid md:grid-cols-2 gap-12 items-center">
                 <div className="space-y-6 text-center md:text-left">
-                    <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
-                        Unique solutions & <br/> <span className="text-primary text-glow-primary">Innovative approach</span> to trading
+                    <h1 className="text-4xl lg:text-5xl font-bold font-headline tracking-tighter">
+                        India’s Most Realistic <span className="text-primary text-glow-primary">Stock Market Simulator</span>
                     </h1>
-                    <p className="max-w-md mx-auto md:mx-0 text-lg text-muted-foreground">
-                        A hyper-realistic stock market simulator for India. Get started with ₹1,00,000 in virtual cash to practice trading, build your portfolio, and learn the markets without risking a single rupee.
+                    <p className="max-w-xl mx-auto md:mx-0 text-lg text-muted-foreground">
+                        Start your trading journey with ₹1,00,000 in virtual cash. Practice real-time trading, build your portfolio, and gain the confidence to invest — without risking a single rupee.
                     </p>
-                    <div className="flex justify-center md:justify-start gap-4">
+                     <div className="space-y-3 pt-2 text-left">
+                        <p className="flex items-center gap-2">
+                            <span className="text-primary font-bold">👉</span>
+                            Simulate. Learn. Win.
+                        </p>
+                        <p className="flex items-center gap-2">
+                           <span className="text-primary font-bold">🔐</span>
+                            No real money. All real learning.
+                        </p>
+                         <p className="flex items-center gap-2">
+                           <span className="text-primary font-bold">📈</span>
+                            Powered by live Indian stock data.
+                        </p>
+                    </div>
+                    <div className="pt-4">
                         <Link href="/signup" className={cn(buttonVariants({ size: "lg", className: "rounded-full" }))}>
-                            Open an Account
-                        </Link>
-                        <Link href="#features" className={cn(buttonVariants({ size: "lg", variant: "outline", className: "rounded-full" }))}>
-                            Explore Features
+                            Open an Account <ArrowRight className="ml-2" />
                         </Link>
                     </div>
                 </div>
@@ -134,9 +145,9 @@ const LandingPage = () => {
         <section id="features" className="py-20 md:py-28 section-glow">
             <div className="container max-w-screen-xl relative">
                 <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Take full control of your assets</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline">A Complete Learning Ecosystem</h2>
                     <p className="mt-4 text-muted-foreground">
-                        NiveshSikho360 is more than just a simulator. It's a complete ecosystem designed to accelerate your journey to becoming a confident investor.
+                        NiveshSikho360 is more than just a simulator. It's a complete platform designed to accelerate your journey to becoming a confident investor.
                     </p>
                 </div>
 
@@ -158,25 +169,14 @@ const LandingPage = () => {
         </section>
         
         <section className="py-20 md:py-28 bg-card/50 section-glow">
-            <div className="container max-w-screen-xl grid md:grid-cols-2 gap-12 items-center relative">
-                <div className="relative order-2 md:order-1">
-                    <div className="absolute -inset-4 bg-gradient-to-br from-primary to-accent rounded-xl opacity-20 blur-2xl"></div>
-                     <Image
-                        src="https://placehold.co/1000x1000.png"
-                        alt="AI Powered Insights"
-                        width={1000}
-                        height={1000}
-                        data-ai-hint="ai brain interface"
-                        className="relative rounded-xl shadow-2xl border border-border"
-                    />
-                </div>
-                <div className="space-y-6 text-center md:text-left order-1 md:order-2">
+            <div className="container max-w-screen-xl">
+                 <div className="text-center max-w-3xl mx-auto">
                     <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">Made for Everyone</Badge>
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline">AI-Powered Insights for Smarter Decisions</h2>
-                    <p className="text-lg text-muted-foreground">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">AI-Powered Insights for Smarter Decisions</h2>
+                    <p className="text-lg text-muted-foreground mt-4">
                         Leverage the power of generative AI to get personalized trade recommendations, news sentiment analysis, and answers to your stock questions from our advanced financial engine.
                     </p>
-                    <Button asChild className="rounded-full">
+                    <Button asChild className="rounded-full mt-6">
                         <Link href="/signup">
                             Get Started <MoveRight className="ml-2"/>
                         </Link>
@@ -186,36 +186,25 @@ const LandingPage = () => {
         </section>
 
         <section className="py-20 md:py-28 section-glow">
-            <div className="container max-w-screen-xl grid md:grid-cols-2 gap-12 items-center relative">
-                 <div className="space-y-6 text-center md:text-left">
+             <div className="container max-w-screen-xl">
+                 <div className="text-center max-w-3xl mx-auto">
                     <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">One Platform</Badge>
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Structured Learning, From Zero to Hero</h2>
-                    <p className="text-lg text-muted-foreground">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">Structured Learning, From Zero to Hero</h2>
+                    <p className="text-lg text-muted-foreground mt-4">
                        Our structured Academy takes you from the very basics to advanced trading concepts. Learn with interactive modules, test your knowledge with quizzes, and earn a certificate to showcase your skills.
                     </p>
-                    <Button asChild className="rounded-full">
+                    <Button asChild className="rounded-full mt-6">
                         <Link href="/academy">
                             Start Learning <MoveRight className="ml-2"/>
                         </Link>
                     </Button>
-                </div>
-                <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-br from-primary to-accent rounded-xl opacity-20 blur-2xl"></div>
-                     <Image
-                        src="https://placehold.co/800x1200.png"
-                        alt="Learning Academy on Mobile"
-                        width={800}
-                        height={1200}
-                        data-ai-hint="education mobile app dark"
-                        className="relative rounded-xl shadow-2xl border border-border"
-                    />
                 </div>
             </div>
         </section>
         
         <section className="py-20 md:py-28 bg-card/50 section-glow">
             <div className="container max-w-screen-xl relative text-center">
-                 <h2 className="text-3xl md:text-4xl font-bold font-headline">Choose the type of assets to trade!</h2>
+                 <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Ambitious Roadmap</h2>
                  <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
                     Here's a sneak peek at the exciting new simulators we're planning to build to make NiveshSikho360 even more comprehensive.
                 </p>
@@ -239,8 +228,8 @@ const LandingPage = () => {
         <section className="py-20 md:py-28 section-glow">
             <div className="container max-w-screen-xl relative">
                 <div className="text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline">What Traders are Saying About Us</h2>
-                     <p className="mt-4 text-muted-foreground">This is where the developer section is, stylized as a testimonial.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline">Meet the Developer</h2>
+                     <p className="mt-4 text-muted-foreground">This project is fueled by a passion for finance and technology.</p>
                 </div>
                 <div className="mt-12 max-w-4xl mx-auto">
                      <div className="relative p-8 rounded-xl bg-card border border-border">
