@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import AiRecommendations from "./ai-recommendations";
 import { Separator } from "./ui/separator";
+import NewsFeed from "./news-feed";
 
 export default function DashboardClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,6 +56,11 @@ export default function DashboardClient() {
           </div>
         )}
       </div>
+      
+      <Separator />
+
+      <NewsFeed />
+
     </div>
   );
 }

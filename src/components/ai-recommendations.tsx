@@ -3,12 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNiveshStore } from '@/hooks/use-trade-store';
 import { getTradeRecommendations, RecommendationFlowOutput } from '@/ai/flows/recommendation-flow';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BrainCircuit, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import TradeDialog from './trade-dialog';
 import type { Stock } from '@/data/stocks';
+import { Badge } from './ui/badge';
 
 export default function AiRecommendations() {
   const { state, stocks, getStockPrice } = useNiveshStore();
@@ -60,8 +61,11 @@ export default function AiRecommendations() {
   }, [state.cash, state.holdings, stocks, getStockPrice]);
 
   useEffect(() => {
+    // We only want to fetch recommendations on initial load, not on every
+    // price update. The user can use the refresh button for new insights.
     fetchRecommendations();
-  }, [fetchRecommendations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTradeClick = (stockSymbol: string) => {
     const stockToTrade = stocks.find(s => s.symbol === stockSymbol);
@@ -77,6 +81,7 @@ export default function AiRecommendations() {
         <Card key={i}>
           <CardHeader>
             <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-4 w-1/4" />
           </CardHeader>
           <CardContent className="space-y-3">
             <Skeleton className="h-4 w-3/4" />
@@ -121,13 +126,16 @@ export default function AiRecommendations() {
                 return (
                 <Card key={index} className="flex flex-col border-2 border-primary/20 hover:border-primary/50 transition-colors shadow-md hover:shadow-primary/10">
                     <CardHeader>
-                    <CardTitle className="flex justify-between items-center">
-                        <span className="font-headline">{rec.stockSymbol}</span>
-                        <span className={`flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-md ${isBuy ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {isBuy ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {rec.action}
-                        </span>
-                    </CardTitle>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="font-headline">{rec.stockSymbol}</CardTitle>
+                      <span className={`flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-md ${isBuy ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {isBuy ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                          {rec.action}
+                      </span>
+                    </div>
+                     <CardDescription>
+                      <Badge variant="secondary">{rec.category}</Badge>
+                    </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow space-y-3">
                         <p className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">AI Rationale (Confidence: {(rec.confidence * 100).toFixed(0)}%)</p>

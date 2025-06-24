@@ -34,6 +34,7 @@ export type RecommendationFlowInput = z.infer<typeof RecommendationFlowInputSche
 const RecommendationSchema = z.object({
   stockSymbol: z.string().describe("The symbol of the stock being recommended for a trade, e.g., 'RELIANCE'."),
   action: z.enum(["BUY", "SELL"]).describe("The recommended action, either BUY or SELL."),
+  category: z.enum(["Sector Diversification", "Growth Opportunity", "Value Play", "Profit Taking"]).describe("The strategic category of the recommendation."),
   reason: z.string().describe("A concise, one-sentence explanation for the recommendation, focusing on technical or market indicators. e.g., 'This stock is showing strong upward momentum.' or 'Consider taking profits as the stock appears overvalued.'"),
   confidence: z.number().min(0).max(1).describe("The AI's confidence in this recommendation, from 0 (low) to 1 (high).")
 });
@@ -56,28 +57,30 @@ const prompt = ai.definePrompt({
 
 Analyze the user's current portfolio, including their cash balance and existing holdings. Also, consider the provided list of all available stocks with their current prices and recent performance.
 
-Based on this complete picture, generate 3-4 trade recommendations. For each recommendation, provide the stock symbol, whether to BUY or SELL, a clear and concise reason for the suggestion, and a confidence score.
+Based on this complete picture, generate 3-4 trade recommendations. For each recommendation, provide the stock symbol, whether to BUY or SELL, a strategic category, a clear and concise reason for the suggestion, and a confidence score.
 
 Here is the user's data:
 - Cash on hand: {{cash}} INR
 - Current Holdings:
 {{#each holdings}}
-  - {{stock.symbol}}: {{quantity}} shares at an average price of {{avgPrice}} INR. Current price is {{stock.price}}.
+  - {{stock.symbol}}: {{quantity}} shares at an average price of {{avgPrice}} INR. Current price is {{stock.price}}. Sector: {{stock.sector}}.
 {{else}}
   - No holdings yet.
 {{/each}}
 
 Here is the list of available stocks and their current data:
 {{#each stocks}}
-- {{symbol}} ({{name}}): Current Price: {{price}} INR, Change: {{changePercent}}%
+- {{symbol}} ({{name}}): Current Price: {{price}} INR, Change: {{changePercent}}%, Sector: {{sector}}
 {{/each}}
 
 Guidelines for recommendations:
-1.  **Diversification:** Suggest trades that help diversify the user's portfolio, especially if they are heavily invested in one sector.
+1.  **Categorization:** Assign a category to each recommendation:
+    *   'Sector Diversification': Suggest if the user is over-concentrated in one sector.
+    *   'Growth Opportunity': Identify stocks with strong upward momentum or in a trending sector.
+    *   'Value Play': Identify stocks that seem undervalued compared to their peers or historical data.
+    *   'Profit Taking'/'Loss Cutting': For SELL recommendations, consider if a stock is overvalued or if it's wise to cut losses.
 2.  **Cash Utilization:** For BUY recommendations, ensure the user has enough cash. Suggest reasonable quantities.
-3.  **Profit Taking/Loss Cutting:** For SELL recommendations, consider if a stock is overvalued or if it's wise to cut losses.
-4.  **Opportunities:** Identify stocks with strong upward momentum, that seem undervalued, or are in a trending sector.
-5.  **Reasoning:** The 'reason' is crucial. It should be educational, mentioning concepts like momentum, valuation, or sector trends in simple terms.
+3.  **Reasoning:** The 'reason' is crucial. It should be educational, mentioning concepts like momentum, valuation, or sector trends in simple terms.
 
 Generate the recommendations now.`,
 });
@@ -92,7 +95,7 @@ const tradeRecommendationFlow = ai.defineFlow(
     // To keep the prompt efficient, let's work with a subset of the most relevant stocks.
     const interestingStocks = input.stocks
       .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
-      .slice(0, 25); // Top 25 movers
+      .slice(0, 35); // Top 35 movers
 
     const { output } = await prompt({
         ...input,

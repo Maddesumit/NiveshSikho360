@@ -38,6 +38,7 @@ const calculateStats = (price: number, history: { date: string; price: number }[
 };
 
 const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'changePercent' | 'history'>[] = [
+  // Nifty 50
   { symbol: "RELIANCE", name: "Reliance Industries Ltd", sector: "Energy", price: 2950.75 },
   { symbol: "TCS", name: "Tata Consultancy Services", sector: "Information Technology", price: 3850.50 },
   { symbol: "HDFCBANK", name: "HDFC Bank Ltd", sector: "Financials", price: 1680.30 },
@@ -68,6 +69,31 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "BAJAJFINSV", name: "Bajaj Finserv Ltd", sector: "Financials", price: 1580.90 },
   { symbol: "M_M", name: "Mahindra & Mahindra Ltd", sector: "Automobile", price: 2850.40 },
   { symbol: "TITAN", name: "Titan Company Ltd", sector: "Consumer Discretionary", price: 3500.75 },
+  { symbol: "POWERGRID", name: "Power Grid Corp of India", sector: "Utilities", price: 325.10 },
+  { symbol: "ONGC", name: "Oil & Natural Gas Corp", sector: "Energy", price: 268.50 },
+  { symbol: "BAJAJ-AUTO", name: "Bajaj Auto Ltd", sector: "Automobile", price: 9700.00 },
+  { symbol: "INDUSINDBK", name: "IndusInd Bank Ltd", sector: "Financials", price: 1490.80 },
+  { symbol: "HINDALCO", name: "Hindalco Industries Ltd", sector: "Materials", price: 650.20 },
+  { symbol: "CIPLA", name: "Cipla Ltd", sector: "Healthcare", price: 1480.90 },
+  { symbol: "COALINDIA", name: "Coal India Ltd", sector: "Energy", price: 470.60 },
+  { symbol: "EICHERMOT", name: "Eicher Motors Ltd", sector: "Automobile", price: 4750.30 },
+  { symbol: "TATACONSUM", name: "Tata Consumer Products Ltd", sector: "Consumer Staples", price: 1100.00 },
+  { symbol: "SBILIFE", name: "SBI Life Insurance Company", sector: "Financials", price: 1450.50 },
+  
+  // Mid-Cap Stocks
+  { symbol: "DMART", name: "Avenue Supermarts Ltd", sector: "Consumer Staples", price: 4750.00 },
+  { symbol: "PIDILITIND", name: "Pidilite Industries Ltd", sector: "Materials", price: 3100.80 },
+  { symbol: "HAVELLS", name: "Havells India Ltd", sector: "Industrials", price: 1890.75 },
+  { symbol: "ZOMATO", name: "Zomato Ltd", sector: "Consumer Discretionary", price: 190.45 },
+  { symbol: "IRCTC", name: "Indian Railway Catering & Tour", sector: "Consumer Discretionary", price: 1015.20 },
+  
+  // Small-Cap Stocks
+  { symbol: "IEX", name: "Indian Energy Exchange Ltd", sector: "Financials", price: 178.60 },
+  { symbol: "TRIDENT", name: "Trident Ltd", sector: "Materials", price: 38.20 },
+  { symbol: "SUZLON", name: "Suzlon Energy Ltd", sector: "Energy", price: 52.80 },
+  { symbol: "RVNL", name: "Rail Vikas Nigam Ltd", sector: "Industrials", price: 390.10 },
+  { symbol: "YESBANK", name: "Yes Bank Ltd", sector: "Financials", price: 24.10 },
+  { symbol: "IDEA", name: "Vodafone Idea Ltd", sector: "Communication Services", price: 17.05 },
 ];
 
 let stocks: Stock[] | null = null;
