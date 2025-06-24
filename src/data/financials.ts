@@ -18,18 +18,34 @@ export type FinancialData = {
     yearly: YearlyReport[];
 };
 
+// Create a simple deterministic pseudo-random number generator seeded by a string.
+// This ensures that for the same stock symbol, we get the same "random" data.
+const pseudoRandomGenerator = (seedStr: string) => {
+  let h = 1779033703, i, c;
+  for (i = 0; i < seedStr.length; i++) {
+    c = seedStr.charCodeAt(i);
+    h = (h << 5) + h + c;
+    h = h & h; // Convert to 32bit integer
+  }
+  return () => {
+    h = Math.sin(h) * 10000;
+    return h - Math.floor(h); // Return a float between 0 and 1
+  };
+};
+
 const generateFinancials = (symbol: string, baseRevenue: number): FinancialData => {
+    const rand = pseudoRandomGenerator(symbol + 'financials'); // Use a unique seed
     const quarterly: QuarterlyReport[] = [];
     const yearly: YearlyReport[] = [];
     
-    let currentYearlyRevenue = baseRevenue * (0.8 + Math.random() * 0.4); // Start with some variance
-    let currentDebt = baseRevenue * (0.2 + Math.random() * 0.6);
+    let currentYearlyRevenue = baseRevenue * (0.8 + rand() * 0.4); // Start with some variance
+    let currentDebt = baseRevenue * (0.2 + rand() * 0.6);
 
     for (let year = 0; year < 5; year++) {
         const currentYear = new Date().getFullYear() - year;
         
         // Yearly data
-        const yearlyProfitMargin = (0.05 + Math.random() * 0.15); // 5% to 20% margin
+        const yearlyProfitMargin = (0.05 + rand() * 0.15); // 5% to 20% margin
         const yearlyNetProfit = Math.floor(currentYearlyRevenue * yearlyProfitMargin);
         yearly.unshift({
             period: `${currentYear}`,
@@ -43,7 +59,7 @@ const generateFinancials = (symbol: string, baseRevenue: number): FinancialData 
         let yearProfitTracker = 0;
         for (let quarter = 4; quarter > 0; quarter--) {
             // Fluctuate quarterly results around the yearly average
-            const seasonalFactor = 1 + (Math.random() - 0.5) * 0.2; // +/- 10% seasonal variance
+            const seasonalFactor = 1 + (rand() - 0.5) * 0.2; // +/- 10% seasonal variance
             let quarterlyRevenue = (currentYearlyRevenue / 4) * seasonalFactor;
             
             // Ensure last quarter makes up the total
@@ -51,7 +67,7 @@ const generateFinancials = (symbol: string, baseRevenue: number): FinancialData 
                 quarterlyRevenue = currentYearlyRevenue - yearRevenueTracker;
             }
 
-            const quarterlyProfitMargin = yearlyProfitMargin * (0.9 + Math.random() * 0.2);
+            const quarterlyProfitMargin = yearlyProfitMargin * (0.9 + rand() * 0.2);
             let quarterlyNetProfit = quarterlyRevenue * quarterlyProfitMargin;
             
             if (quarter === 1) {
@@ -62,7 +78,7 @@ const generateFinancials = (symbol: string, baseRevenue: number): FinancialData 
                 period: `Q${quarter} ${currentYear}`,
                 revenue: Math.floor(quarterlyRevenue),
                 netProfit: Math.floor(quarterlyNetProfit),
-                debt: Math.floor(currentDebt * (0.98 + Math.random() * 0.04)) // Slight debt fluctuation
+                debt: Math.floor(currentDebt * (0.98 + rand() * 0.04)) // Slight debt fluctuation
             });
 
             yearRevenueTracker += quarterlyRevenue;
@@ -70,8 +86,8 @@ const generateFinancials = (symbol: string, baseRevenue: number): FinancialData 
         }
 
         // Project backwards for previous year's data
-        currentYearlyRevenue *= (0.85 + Math.random() * 0.2); // 85% to 105% of previous year
-        currentDebt *= (0.9 + Math.random() * 0.2);
+        currentYearlyRevenue *= (0.85 + rand() * 0.2); // 85% to 105% of previous year
+        currentDebt *= (0.9 + rand() * 0.2);
     }
 
 
@@ -100,7 +116,8 @@ const baseRevenues: { [key: string]: number } = {
 
 export const getFinancials = (symbol: string): FinancialData => {
     if (!financialDataStore[symbol]) {
-        const baseRevenue = baseRevenues[symbol] || 5000 + Math.random() * 50000;
+        const rand = pseudoRandomGenerator(symbol + 'baseRevenue');
+        const baseRevenue = baseRevenues[symbol] || 5000 + rand() * 50000;
         financialDataStore[symbol] = generateFinancials(symbol, baseRevenue);
     }
     return financialDataStore[symbol];
