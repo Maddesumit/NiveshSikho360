@@ -82,7 +82,7 @@ const LandingPage = () => {
     <div className="flex flex-col min-h-dvh bg-background text-foreground overflow-x-hidden">
       <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/10 to-transparent -z-10"></div>
       <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl">
-        <div className="container flex h-16 max-w-screen-xl items-center justify-between">
+        <div className="container mx-auto px-4 flex h-16 max-w-screen-xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <NiveshSikho360Icon className="w-8 h-8 text-primary" />
             <span className="font-headline font-bold text-xl">NiveshSikho360</span>
@@ -100,24 +100,24 @@ const LandingPage = () => {
 
       <main className="flex-grow">
         <section className="relative py-20 md:py-32">
-             <div className="container max-w-screen-xl grid md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6 text-center md:text-left">
-                    <h1 className="text-4xl lg:text-5xl font-bold font-headline tracking-tighter">
+            <div className="container mx-auto px-4 max-w-screen-xl">
+                <div className="space-y-6 text-center max-w-4xl mx-auto">
+                    <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
                         India’s Most Realistic <span className="text-primary text-glow-primary">Stock Market Simulator</span>
                     </h1>
-                    <p className="max-w-xl mx-auto md:mx-0 text-lg text-muted-foreground">
+                    <p className="text-lg text-muted-foreground">
                         Start your trading journey with ₹1,00,000 in virtual cash. Practice real-time trading, build your portfolio, and gain the confidence to invest — without risking a single rupee.
                     </p>
-                     <div className="space-y-3 pt-2 text-left">
-                        <p className="flex items-center gap-2">
+                     <div className="space-y-3 pt-2">
+                        <p className="flex items-center justify-center gap-2 text-lg">
                             <span className="text-primary font-bold">👉</span>
                             Simulate. Learn. Win.
                         </p>
-                        <p className="flex items-center gap-2">
+                        <p className="flex items-center justify-center gap-2 text-lg">
                            <span className="text-primary font-bold">🔐</span>
                             No real money. All real learning.
                         </p>
-                         <p className="flex items-center gap-2">
+                         <p className="flex items-center justify-center gap-2 text-lg">
                            <span className="text-primary font-bold">📈</span>
                             Powered by live Indian stock data.
                         </p>
@@ -128,22 +128,11 @@ const LandingPage = () => {
                         </Link>
                     </div>
                 </div>
-                <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-br from-primary to-accent rounded-xl opacity-20 blur-2xl"></div>
-                    <Image
-                        src="https://placehold.co/1200x800.png"
-                        alt="NiveshSikho360 Dashboard"
-                        width={1200}
-                        height={800}
-                        data-ai-hint="trading dashboard dark"
-                        className="relative rounded-xl shadow-2xl border border-border"
-                    />
-                </div>
             </div>
         </section>
 
         <section id="features" className="py-20 md:py-28 section-glow">
-            <div className="container max-w-screen-xl relative">
+            <div className="container max-w-screen-xl mx-auto px-4 relative">
                 <div className="text-center max-w-3xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline">A Complete Learning Ecosystem</h2>
                     <p className="mt-4 text-muted-foreground">
@@ -169,7 +158,7 @@ const LandingPage = () => {
         </section>
         
         <section className="py-20 md:py-28 bg-card/50 section-glow">
-            <div className="container max-w-screen-xl">
+            <div className="container max-w-screen-xl mx-auto px-4">
                  <div className="text-center max-w-3xl mx-auto">
                     <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">Made for Everyone</Badge>
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">AI-Powered Insights for Smarter Decisions</h2>
@@ -186,7 +175,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-20 md:py-28 section-glow">
-             <div className="container max-w-screen-xl">
+             <div className="container max-w-screen-xl mx-auto px-4">
                  <div className="text-center max-w-3xl mx-auto">
                     <Badge variant="default" className="bg-primary/10 text-primary border border-primary/20">One Platform</Badge>
                     <h2 className="text-3xl md:text-4xl font-bold font-headline mt-4">Structured Learning, From Zero to Hero</h2>
@@ -203,7 +192,7 @@ const LandingPage = () => {
         </section>
         
         <section className="py-20 md:py-28 bg-card/50 section-glow">
-            <div className="container max-w-screen-xl relative text-center">
+            <div className="container max-w-screen-xl mx-auto px-4 relative text-center">
                  <h2 className="text-3xl md:text-4xl font-bold font-headline">Our Ambitious Roadmap</h2>
                  <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
                     Here's a sneak peek at the exciting new simulators we're planning to build to make NiveshSikho360 even more comprehensive.
@@ -226,7 +215,7 @@ const LandingPage = () => {
         </section>
 
         <section className="py-20 md:py-28 section-glow">
-            <div className="container max-w-screen-xl relative">
+            <div className="container max-w-screen-xl mx-auto px-4 relative">
                 <div className="text-center">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline">Meet the Developer</h2>
                      <p className="mt-4 text-muted-foreground">This project is fueled by a passion for finance and technology.</p>
@@ -271,7 +260,7 @@ const LandingPage = () => {
         </section>
 
          <section className="py-20 md:py-28">
-            <div className="container max-w-screen-xl">
+            <div className="container max-w-screen-xl mx-auto px-4">
                <div className="relative rounded-2xl p-12 text-center bg-gradient-to-br from-primary to-accent">
                     <h2 className="text-3xl md:text-4xl font-bold font-headline text-primary-foreground">Ready to get started?</h2>
                     <p className="mt-4 max-w-2xl mx-auto text-lg text-primary-foreground/80">
@@ -289,7 +278,7 @@ const LandingPage = () => {
       </main>
 
       <footer className="border-t border-border/40 py-8">
-        <div className="container max-w-screen-xl text-sm text-muted-foreground">
+        <div className="container max-w-screen-xl mx-auto px-4 text-sm text-muted-foreground">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
                     <NiveshSikho360Icon className="w-6 h-6" />
