@@ -22,7 +22,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Rocket, TrendingDown, TrendingUp } from "lucide-react";
 
 const ForecastDisplay = ({ stock, forecast, loading }: { stock: Stock; forecast: TradeForecastOutput | null; loading: boolean; }) => {
-  const formatCurrency = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => { setIsClient(true) }, []);
+
+  const formatCurrency = (value: number) => {
+    if (!isClient) return <Skeleton className="h-5 w-20" />;
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+  }
 
   if (loading) {
     return (
@@ -72,6 +78,9 @@ export default function TradeDialog({
   const [quantity, setQuantity] = useState(1);
   const [forecast, setForecast] = useState<TradeForecastOutput | null>(null);
   const [loadingForecast, setLoadingForecast] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => { setIsClient(true) }, []);
 
   useEffect(() => {
     const fetchForecast = async () => {
@@ -141,6 +150,11 @@ export default function TradeDialog({
   const canBuy = state.cash >= totalCost;
   const canSell = (holding?.quantity ?? 0) >= quantity;
 
+  const formatCurrency = (value: number) => {
+    if (!isClient) return <Skeleton className="h-5 w-24 inline-block" />;
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -150,10 +164,7 @@ export default function TradeDialog({
           </DialogTitle>
           <DialogDescription>
             {stock.name} - Current Price:{" "}
-            {new Intl.NumberFormat("en-IN", {
-              style: "currency",
-              currency: "INR",
-            }).format(stock.price)}
+            {formatCurrency(stock.price)}
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="buy" className="w-full">
@@ -163,10 +174,7 @@ export default function TradeDialog({
           </TabsList>
           <TabsContent value="buy">
             <div className="space-y-4 py-4">
-              <p>Available Cash: {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-                }).format(state.cash)}</p>
+              <p>Available Cash: {formatCurrency(state.cash)}</p>
               <div className="space-y-2">
                 <Label htmlFor="buy-quantity">Quantity</Label>
                 <Input
@@ -177,10 +185,7 @@ export default function TradeDialog({
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
                 />
               </div>
-              <div className="font-semibold">Total Cost: {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-                }).format(totalCost)}</div>
+              <div className="font-semibold">Total Cost: {formatCurrency(totalCost)}</div>
                  <ForecastDisplay stock={stock} forecast={forecast} loading={loadingForecast} />
             </div>
             <DialogFooter>
@@ -207,10 +212,7 @@ export default function TradeDialog({
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
                 />
               </div>
-              <div className="font-semibold">Total Proceeds: {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-                }).format(totalCost)}</div>
+              <div className="font-semibold">Total Proceeds: {formatCurrency(totalCost)}</div>
                  <ForecastDisplay stock={stock} forecast={forecast} loading={loadingForecast} />
             </div>
             <DialogFooter>

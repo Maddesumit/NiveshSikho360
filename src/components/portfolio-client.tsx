@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import {
   Card,
@@ -25,8 +25,20 @@ import {
   Legend,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 const COLORS = ["#FFB347", "#468499", "#82ca9d", "#ffc658", "#8884d8"];
+
+const FormattedCurrency = ({ value, className }: { value: number; className?: string }) => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => { setIsClient(true) }, []);
+  
+  if (!isClient) {
+    return <Skeleton className={cn("h-6 w-24", className)} />;
+  }
+  
+  return <p className={className}>{new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value)}</p>
+}
 
 export default function PortfolioClient() {
   const { state, getStockPrice } = useNiveshStore();
@@ -72,12 +84,7 @@ export default function PortfolioClient() {
             <CardTitle>Portfolio Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-              }).format(portfolioMetrics.portfolioValue)}
-            </p>
+            <FormattedCurrency value={portfolioMetrics.portfolioValue} className="text-2xl font-bold" />
           </CardContent>
         </Card>
         <Card>
@@ -85,12 +92,7 @@ export default function PortfolioClient() {
             <CardTitle>Holdings Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-              }).format(portfolioMetrics.currentValue)}
-            </p>
+            <FormattedCurrency value={portfolioMetrics.currentValue} className="text-2xl font-bold" />
           </CardContent>
         </Card>
         <Card>
@@ -98,7 +100,7 @@ export default function PortfolioClient() {
             <CardTitle>Total P/L</CardTitle>
           </CardHeader>
           <CardContent>
-            <p
+             <p
               className={cn("text-2xl font-bold", {
                 "text-green-600": portfolioMetrics.totalPandL >= 0,
                 "text-red-600": portfolioMetrics.totalPandL < 0,
@@ -117,12 +119,7 @@ export default function PortfolioClient() {
             <CardTitle>Available Cash</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-              }).format(cash)}
-            </p>
+             <FormattedCurrency value={cash} className="text-2xl font-bold" />
           </CardContent>
         </Card>
       </div>

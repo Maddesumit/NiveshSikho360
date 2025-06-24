@@ -210,6 +210,12 @@ export default function StockDetailClient({ stock: initialStock, financials, rel
     const { getStockPrice, stocks } = useNiveshStore();
     const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
     const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const [analyzedNews, setAnalyzedNews] = useState<AnalyzedNews[]>(
         () => relatedNews.map(n => ({...n, loading: false}))
     );
@@ -270,14 +276,20 @@ export default function StockDetailClient({ stock: initialStock, financials, rel
             <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight font-headline">{stock.name} ({stock.symbol})</h1>
-                    <div className="flex items-baseline gap-4 mt-1">
-                        <p className="text-3xl font-bold">
-                            {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(stock.price)}
-                        </p>
-                        <div className={cn("flex items-center text-xl font-semibold", isPositive ? "text-green-600" : "text-red-600")}>
-                            {isPositive ? <ArrowUp className="w-5 h-5" /> : <ArrowDown className="w-5 h-5" />}
-                            {stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
-                        </div>
+                    <div className="flex items-baseline gap-4 mt-1 h-9">
+                        {isClient ? (
+                            <>
+                                <p className="text-3xl font-bold">
+                                    {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(stock.price)}
+                                </p>
+                                <div className={cn("flex items-center text-xl font-semibold", isPositive ? "text-green-600" : "text-red-600")}>
+                                    {isPositive ? <ArrowUp className="w-5 h-5" /> : <ArrowDown className="w-5 h-5" />}
+                                    {stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
+                                </div>
+                            </>
+                        ) : (
+                            <Skeleton className="h-full w-64" />
+                        )}
                     </div>
                 </div>
                 <Button size="lg" onClick={() => setTradeDialogOpen(true)}>Trade</Button>

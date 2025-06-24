@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect } from "react";
+import React, { createContext, useContext, useReducer, ReactNode, useCallback, useState, useEffect, useMemo } from "react";
 import type { Stock } from "@/data/stocks";
-import { getStocks, getStockBySymbol } from "@/data/stocks";
+import { getStocks, getStockBySymbol, pseudoRandomGenerator } from "@/data/stocks";
 
 type Holding = {
   stock: Stock;
@@ -142,19 +142,28 @@ const NiveshContext = createContext<NiveshContextType | undefined>(undefined);
 export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(niveshReducer, initialState);
   const [stocks, setStocks] = useState<Stock[]>([]);
+  
+  const priceGenerators = useMemo(() => {
+    // This will only run once on the client, after getStocks() is available.
+    return getStocks().map(stock => pseudoRandomGenerator(stock.symbol + 'pricefeed'));
+  }, []);
 
   useEffect(() => {
-    // Client-side only initialization
+    // Initialize stocks on the client side to avoid hydration mismatches
+    // with server-generated static data.
     setStocks(getStocks());
   }, []);
 
   useEffect(() => {
-    if (stocks.length === 0) return; // Don't start interval if there are no stocks
+    if (stocks.length === 0 || priceGenerators.length === 0) return;
 
     const interval = setInterval(() => {
       setStocks(prevStocks =>
-        prevStocks.map(stock => {
-          const changePercent = (Math.random() - 0.5) * 0.01; // Fluctuate by +/- 0.5%
+        prevStocks.map((stock, index) => {
+          const rand = priceGenerators[index];
+          if (!rand) return stock;
+          
+          const changePercent = (rand() - 0.5) * 0.01; // Fluctuate by +/- 0.5%
           const newPrice = Math.max(0.01, stock.price * (1 + changePercent));
           
           return {
@@ -165,10 +174,10 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
           };
         })
       );
-    }, 3000); // Update every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [stocks.length]);
+  }, [stocks.length, priceGenerators]);
 
   const executeTrade = useCallback((action: Action) => {
     if (action.type === 'BUY' || action.type === 'SELL') {

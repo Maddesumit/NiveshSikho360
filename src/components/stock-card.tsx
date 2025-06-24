@@ -2,6 +2,7 @@
 
 import type { Stock } from "@/data/stocks";
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -17,8 +18,12 @@ import {
 import { Area, AreaChart, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
 
 export function StockCard({ stock }: { stock: Stock }) {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => { setIsClient(true) }, []);
+
   const isPositive = stock.change >= 0;
 
   const chartColor = isPositive
@@ -57,11 +62,13 @@ export function StockCard({ stock }: { stock: Stock }) {
           <CardDescription>{stock.name}</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow space-y-4">
-          <div className="text-2xl font-bold">
-            {new Intl.NumberFormat("en-IN", {
-              style: "currency",
-              currency: "INR",
-            }).format(stock.price)}
+          <div className="text-2xl font-bold h-8">
+            {isClient ? (
+                new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                }).format(stock.price)
+            ) : <Skeleton className="h-full w-3/4" />}
           </div>
           <div className="h-24 w-full">
             <ChartContainer config={chartConfig} className="h-full w-full">

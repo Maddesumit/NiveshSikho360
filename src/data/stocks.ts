@@ -16,7 +16,7 @@ export type Stock = {
 
 // Create a simple deterministic pseudo-random number generator seeded by a string.
 // This ensures that for the same stock symbol, we get the same "random" history.
-const pseudoRandomGenerator = (seedStr: string) => {
+export const pseudoRandomGenerator = (seedStr: string) => {
   let h = 1779033703, i, c;
   for (i = 0; i < seedStr.length; i++) {
     c = seedStr.charCodeAt(i);

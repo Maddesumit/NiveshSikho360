@@ -1,11 +1,19 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Award, Star } from 'lucide-react';
 import { NiveshSikho360Icon } from "./icons";
+import { Skeleton } from './ui/skeleton';
 
 export default function AcademyCertificate({ courseTitle }: { courseTitle: string }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <Card className="max-w-4xl mx-auto border-2 border-primary/50 shadow-lg bg-background/80 backdrop-blur-sm">
       <CardContent className="p-8 space-y-6">
@@ -30,7 +38,13 @@ export default function AcademyCertificate({ courseTitle }: { courseTitle: strin
                     NiveshSikho360 Academy
                 </span>
             </div>
-            <p className="text-sm text-muted-foreground">Issued on: {new Date().toLocaleDateString()}</p>
+            <div className="text-sm text-muted-foreground">
+              {isClient ? (
+                `Issued on: ${new Date().toLocaleDateString()}`
+              ) : (
+                <Skeleton className="h-5 w-32" />
+              )}
+            </div>
         </div>
 
         <div className="text-center pt-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -28,10 +28,16 @@ import {
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { state } = useNiveshStore();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -84,11 +90,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary">
               <Wallet className="w-6 h-6 text-accent" />
-              <div className="text-lg font-semibold">
-                {new Intl.NumberFormat("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                }).format(state.cash)}
+              <div className="text-lg font-semibold w-32">
+                {isClient ? (
+                  new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                  }).format(state.cash)
+                ) : (
+                  <Skeleton className="h-6 w-full" />
+                )}
               </div>
             </div>
           </div>
