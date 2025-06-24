@@ -144,12 +144,11 @@ const LandingPage = () => {
                 <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-8 md:gap-12 bg-card/50 p-8 rounded-lg shadow-lg">
                     <div className="flex-shrink-0">
                         <Image
-                            src="https://placehold.co/256x256.png"
+                            src="/founder.png"
                             alt="Sumit Madde, Founder of NiveshSikho360"
                             width={256}
                             height={256}
                             className="rounded-full object-cover border-4 border-primary/50"
-                            data-ai-hint="portrait man"
                         />
                     </div>
                     <div>
