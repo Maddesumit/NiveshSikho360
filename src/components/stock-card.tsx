@@ -27,7 +27,7 @@ export function StockCard({ stock }: { stock: Stock }) {
   const isPositive = stock.change >= 0;
 
   const chartColor = isPositive
-    ? "hsl(var(--chart-2))"
+    ? "hsl(var(--chart-1))"
     : "hsl(var(--destructive))";
 
   const chartConfig = {

@@ -22,7 +22,7 @@ body {
     --muted-foreground: 215 20% 65%;
     --accent: 262 84% 60%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
     --border: 222 84% 15%;
     --input: 222 84% 15%;
@@ -35,12 +35,12 @@ body {
     --radius: 0.5rem;
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 36 100% 60%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 222 84% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 36 100% 60%;
+    --sidebar-border: 222 84% 15%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -68,6 +68,12 @@ body {
     }
     .text-glow-primary {
         text-shadow: 0 0 8px hsl(var(--primary) / 0.7), 0 0 20px hsl(var(--primary) / 0.5);
+    }
+    .bg-grid {
+        background-image:
+          linear-gradient(to right, hsl(var(--border) / 0.2) 1px, transparent 1px),
+          linear-gradient(to bottom, hsl(var(--border) / 0.2) 1px, transparent 1px);
+        background-size: 2rem 2rem;
     }
     .bg-grid-glow {
       background-color: hsl(var(--background));

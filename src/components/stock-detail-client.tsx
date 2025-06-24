@@ -268,7 +268,7 @@ export default function StockDetailClient({ stock: initialStock, financials, rel
         }
     }, [stock.history, timeRange]);
 
-    const chartColor = isPositive ? "hsl(var(--chart-2))" : "hsl(var(--destructive))";
+    const chartColor = isPositive ? "hsl(var(--chart-1))" : "hsl(var(--destructive))";
     const chartConfig = { price: { label: "Price", color: chartColor } };
 
     return (

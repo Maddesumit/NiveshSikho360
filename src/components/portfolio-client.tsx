@@ -27,7 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 
-const COLORS = ["#FFB347", "#468499", "#82ca9d", "#ffc658", "#8884d8"];
+const COLORS = ['#3B82F6', '#A78BFA', '#2DD4BF', '#FBBF24', '#F87171'];
 
 const FormattedCurrency = ({ value, className }: { value: number; className?: string }) => {
   const [isClient, setIsClient] = useState(false);
