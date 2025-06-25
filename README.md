@@ -52,7 +52,7 @@ Follow these instructions to set up and run the project on your local machine fo
 First, clone the project to your local machine.
 
 ```bash
-git clone https://github.com/your-username/niveshsikho360.git
+git clone https://github.com/Maddesumit/NiveshSikho360.git
 cd niveshsikho360
 ```
 

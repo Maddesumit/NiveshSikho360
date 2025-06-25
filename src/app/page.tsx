@@ -85,7 +85,7 @@ const LandingPage = () => {
 
   return (
     <div className="flex flex-col min-h-dvh bg-background text-foreground overflow-x-hidden">
-      <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 w-full bg-background border-b border-border/20">
         <div className="container mx-auto px-4 flex h-16 max-w-screen-xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <NiveshSikho360Icon className="w-8 h-8 text-primary" />
@@ -95,7 +95,7 @@ const LandingPage = () => {
              <Link href="/login" className={cn(buttonVariants({ variant: "ghost" }))}>
                 Sign In
              </Link>
-             <Link href="/signup" className={cn(buttonVariants({ variant: "default" }), 'rounded-full')}>
+             <Link href="/signup" className={cn(buttonVariants({ variant: "default" }))}>
                 Get Started Free
              </Link>
           </div>
@@ -103,38 +103,51 @@ const LandingPage = () => {
       </header>
 
       <main className="flex-grow">
-        <section className="relative py-20 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 -z-20 h-full w-full bg-background bg-grid"></div>
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[80%] h-[60%] rounded-full bg-primary/10 blur-[100px] -z-10"></div>
+        <section className="py-20 md:py-28">
+            <div className="container mx-auto px-4 max-w-screen-xl">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                
+                {/* Left Column */}
+                <div className="space-y-6 text-center md:text-left">
+                    <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tight">
+                    Stock Market is the Best Way to <span className="text-primary">Invest your Money</span>
+                    </h1>
+                    <p className="text-lg text-muted-foreground">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the.
+                    </p>
+                    <Link href="#features" className={cn(buttonVariants({ variant: "link" }), "text-lg text-primary p-0 h-auto font-semibold")}>
+                    Learn More <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                </div>
 
-          <div className="container mx-auto px-4 max-w-screen-xl">
-            <div className="space-y-8 text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tighter">
-                NiveshSikho360: India’s Ultimate <span className="text-primary text-glow-primary">Investment Learning Platform</span>
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Practice with ₹1,00,000 virtual cash. Trade stocks. Simulate mutual funds. Build financial confidence.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
-                <Link href="/signup" className={cn(buttonVariants({ size: "lg", className: "rounded-full w-full sm:w-auto" }))}>
-                    Claim Your ₹1,00,000 <ArrowRight className="ml-2" />
-                </Link>
-                <Link href="#features" className={cn(buttonVariants({ size: "lg", variant: "ghost", className: "rounded-full w-full sm:w-auto" }))}>
-                    Explore Features
-                </Link>
-              </div>
-              <div className="pt-6 flex flex-col sm:flex-row justify-center items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-primary" />
-                  <span>Zero-Risk Simulation</span>
+                {/* Right Column */}
+                <div className="relative mt-10 md:mt-0">
+                    <Image
+                        src="https://placehold.co/800x600.png"
+                        alt="Person analyzing stock market chart"
+                        width={800}
+                        height={600}
+                        className="rounded-lg object-cover brightness-50"
+                        data-ai-hint="stock trading desk"
+                    />
+                    <svg
+                        className="absolute top-0 left-0 w-full h-full opacity-60"
+                        viewBox="0 0 400 250"
+                        preserveAspectRatio="none"
+                    >
+                    <path
+                        d="M20 180 L40 120 L60 140 L100 130 L120 100 L140 60 L160 80 L200 70 L220 100 L240 140 L260 120 L300 150 L320 120 L340 80 L360 110 L400 90"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                    </svg>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Banknote className="w-5 h-5 text-primary" />
-                  <span>No Credit Card Required</span>
+
                 </div>
-              </div>
             </div>
-          </div>
         </section>
 
         <section className="py-20 md:py-28 section-glow">
