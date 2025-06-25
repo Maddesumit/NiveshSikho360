@@ -12,6 +12,7 @@ import {
   HelpCircle,
   Loader,
   Github,
+  ListOrdered,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useAuth } from "@/hooks/use-auth";
@@ -48,6 +49,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/markets", label: "Markets", icon: Store },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
+    { href: "/orders", label: "Orders", icon: ListOrdered },
     { href: "/academy", label: "Academy", icon: BookOpen },
     { href: "/glossary", label: "Glossary", icon: HelpCircle },
   ];

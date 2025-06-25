@@ -8,6 +8,16 @@ import { useAuth } from "./use-auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+// Order type
+export type Order = {
+  id: string;
+  stock: Stock;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price: number;
+  timestamp: string;
+};
+
 // The state used within the application, with full Stock objects for convenience
 type Holding = {
   stock: Stock;
@@ -18,6 +28,7 @@ type Holding = {
 type NiveshState = {
   cash: number;
   holdings: Holding[];
+  orders: Order[];
   completedModules: string[];
   courseCompleted: boolean;
 };
@@ -29,10 +40,20 @@ type StoredHolding = {
   avgPrice: number;
 }
 
+type StoredOrder = {
+  id: string;
+  stockSymbol: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price: number;
+  timestamp: string;
+}
+
 type StoredNiveshState = {
   userId: string;
   cash: number;
   holdings: StoredHolding[];
+  orders: StoredOrder[];
   completedModules: string[];
   courseCompleted: boolean;
 }
@@ -47,6 +68,7 @@ type Action =
 const initialState: NiveshState = {
   cash: 100000,
   holdings: [],
+  orders: [],
   completedModules: [],
   courseCompleted: false,
 };
@@ -88,11 +110,21 @@ const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
           avgPrice: stock.price,
         });
       }
+      
+      const newOrder: Order = {
+        id: new Date().getTime().toString(),
+        stock,
+        quantity,
+        price: stock.price,
+        type: 'BUY',
+        timestamp: new Date().toISOString(),
+      };
 
       return {
         ...state,
         cash: state.cash - cost,
         holdings: newHoldings,
+        orders: [newOrder, ...state.orders],
       };
     }
     case "SELL": {
@@ -122,10 +154,20 @@ const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
         };
       }
 
+      const newOrder: Order = {
+        id: new Date().getTime().toString(),
+        stock,
+        quantity,
+        price: stock.price,
+        type: 'SELL',
+        timestamp: new Date().toISOString(),
+      };
+
       return {
         ...state,
         cash: state.cash + proceeds,
-        holdings: newHoldings
+        holdings: newHoldings,
+        orders: [newOrder, ...state.orders]
       };
     }
     case "COMPLETE_MODULE": {
@@ -201,11 +243,16 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
               const stock = getStockBySymbol(h.stockSymbol);
               return stock ? { ...h, stock } : null
           }).filter((h): h is Holding => h !== null);
+
+          const orders = (dbState.orders || []).map(o => {
+            const stock = getStockBySymbol(o.stockSymbol);
+            return stock ? { ...o, stock } : null
+          }).filter((o): o is Order => o !== null);
           
-          dispatch({ type: "SET_STATE_FROM_DB", payload: { ...dbState, holdings } });
+          dispatch({ type: "SET_STATE_FROM_DB", payload: { ...dbState, holdings, orders } });
         } else {
           // New user, set initial state in DB
-          await setDoc(docRef, { ...initialState, userId: user.uid });
+          await setDoc(docRef, { ...initialState, userId: user.uid, orders: [] });
           dispatch({ type: "SET_STATE_FROM_DB", payload: initialState });
         }
       } catch (error) {
@@ -230,6 +277,14 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
             stockSymbol: h.stock.symbol,
             quantity: h.quantity,
             avgPrice: h.avgPrice,
+          })),
+          orders: state.orders.map(o => ({
+            id: o.id,
+            stockSymbol: o.stock.symbol,
+            type: o.type,
+            quantity: o.quantity,
+            price: o.price,
+            timestamp: o.timestamp,
           }))
         };
         try {
