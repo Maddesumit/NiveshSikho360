@@ -1,7 +1,6 @@
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,13 +13,12 @@ const firebaseConfig = {
 
 let app: FirebaseApp | undefined = undefined;
 let auth: Auth | null = null;
-let db: Firestore | null = null;
 
 // Only initialize Firebase if the API key is provided to avoid crashing the app.
 if (firebaseConfig.apiKey) {
   app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   auth = getAuth(app);
-  db = getFirestore(app);
 }
 
-export { auth, db };
+// NOTE: db has been removed, as we are now using MongoDB.
+export { auth };
