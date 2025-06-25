@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -13,9 +13,11 @@ import {
   Loader,
   Github,
   ListOrdered,
+  Banknote,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useAuth } from "@/hooks/use-auth";
+import { useNiveshStore } from "@/hooks/use-trade-store";
 import { UserNav } from "./user-nav";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -29,7 +31,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useAuth();
+  const { state } = useNiveshStore();
   const [open, setOpen] = React.useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup' || pathname === '/future-plans';
 
@@ -106,6 +115,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex w-full items-center gap-4 md:ml-auto md:flex-1 md:justify-end">
+            {isClient && (
+              <div className="hidden md:flex items-center gap-2 text-sm border rounded-md p-2 bg-muted/50">
+                <Banknote className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-muted-foreground">
+                  {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                  }).format(state.cash)}
+                </span>
+              </div>
+            )}
              <a href="https://github.com/FirebaseExtended/ai-apps-collection-node" target="_blank" rel="noopener noreferrer" className="hidden md:block">
                 <Button variant="ghost" size="icon">
                     <Github className="h-5 w-5" />
