@@ -24,6 +24,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import TutorialGuide from "./tutorial-guide";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -135,6 +136,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         {children}
       </main>
+      <TutorialGuide />
     </div>
   );
 }
