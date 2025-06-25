@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow for answering questions about a specific stock.
@@ -32,19 +33,27 @@ const prompt = ai.definePrompt({
   name: 'stockQaPrompt',
   input: { schema: StockQaInputSchema },
   output: { schema: StockQaOutputSchema },
-  prompt: `You are a helpful AI financial assistant specializing in {{stockName}}. Your goal is to answer the user's question accurately and concisely based *only* on the context provided below. Do not use any external knowledge. If the answer cannot be found in the context, say "I do not have enough information to answer that question."
+  prompt: `You are a helpful AI financial assistant specializing in {{stockName}}. Your goal is to answer the user's question accurately and concisely.
+
+**Instructions:**
+1.  Your answer MUST be based *only* on the context provided below.
+2.  The context includes financial data as a JSON string and a list of recent news headlines. You must analyze both to formulate your answer.
+3.  If the provided context does not contain enough information to answer the question, you MUST respond with the exact phrase: "I do not have enough information to answer that question."
+4.  Keep your answer brief and to the point.
 
 **Context:**
-1.  **Financial Data:** {{{financialsJson}}}
-2.  **Recent News Headlines:**
+- **Financial Data (JSON):**
+{{{financialsJson}}}
+
+- **Recent News Headlines:**
 {{#each newsHeadlines}}
-    - {{{this}}}
+  - {{{this}}}
 {{/each}}
 
 **User's Question:**
 "{{{question}}}"
 
-Provide your answer now.`,
+Provide your answer.`,
 });
 
 const stockQaFlow = ai.defineFlow(
