@@ -105,17 +105,14 @@ const LandingPage = () => {
       <main className="flex-grow">
         <section className="py-20 md:py-28">
             <div className="container mx-auto px-4 max-w-screen-xl">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                
-                {/* Left Column */}
-                <div className="space-y-6 text-center md:text-left">
+                <div className="text-center max-w-4xl mx-auto">
                     <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tight">
-                        Learn to Invest. <span className="text-primary">Master the Market.</span>
+                        NiveshSikho360: <br className="hidden md:block" /> Learn to Invest. <span className="text-primary">Master the Market.</span>
                     </h1>
-                    <p className="text-lg text-muted-foreground">
+                    <p className="mt-6 text-lg text-muted-foreground">
                         A hyper-realistic stock market simulator for the Indian market. Practice with ₹1,00,000 virtual cash and gain confidence before you invest for real.
                     </p>
-                    <div className="flex justify-center md:justify-start items-center gap-4">
+                    <div className="mt-8 flex justify-center items-center gap-4">
                         <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
                             Get Started Free
                             <Rocket className="ml-2" />
@@ -124,19 +121,6 @@ const LandingPage = () => {
                             Sign In
                         </Link>
                     </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="relative mt-10 md:mt-0">
-                    <Image
-                        src="/hero.jpg"
-                        alt="A modern desk setup with stock charts on screen"
-                        width={800}
-                        height={600}
-                        className="rounded-lg object-cover"
-                    />
-                </div>
-
                 </div>
             </div>
         </section>
