@@ -24,6 +24,7 @@ import { pseudoRandomGenerator } from "@/data/stocks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
+import Link from "next/link";
 
 
 const MarketIndices = () => {
@@ -104,22 +105,29 @@ const StockWatchlist = ({ stocks, selectedStock, onSelectStock, searchTerm, setS
     )
 }
 
-const OverviewTerm = ({ term, value, explanation }: { term: string, value: string | number, explanation: string }) => (
-    <div>
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger className="flex items-center gap-1 text-muted-foreground text-sm cursor-help">
-                    <span>{term}</span>
-                    <Info className="h-3 w-3" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                    <p>{explanation}</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-        <p className="font-semibold">{value}</p>
-    </div>
-);
+const OverviewTerm = ({ term, value, explanation, academyId }: { term: string, value: string | number, explanation: string, academyId?: string }) => {
+    const TriggerContent = (
+        <TooltipTrigger className="flex items-center gap-1 text-muted-foreground text-sm cursor-help hover:underline">
+            <span>{term}</span>
+            <Info className="h-3 w-3" />
+        </TooltipTrigger>
+    );
+
+    return (
+        <div>
+            <TooltipProvider>
+                <Tooltip>
+                    {academyId ? <Link href={`/academy/${academyId}`}>{TriggerContent}</Link> : TriggerContent}
+                    <TooltipContent className="max-w-xs">
+                        <p>{explanation}</p>
+                        {academyId && <p className="mt-2 text-primary text-xs font-semibold">Click to learn more in the Academy.</p>}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            <p className="font-semibold">{value}</p>
+        </div>
+    );
+}
 
 const PerformanceOverview = ({ stock }: { stock: Stock }) => {
     const performanceData = useMemo(() => {
@@ -227,15 +235,15 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
                 <CardContent className="p-0 flex">
                     <div className="w-1/3 p-4 border-r space-y-4">
                         <div>
-                            <p className="text-sm font-semibold">Quality</p>
+                            <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground">Quality</Link>
                             <ScorePill label={performanceData.quality.label} score={performanceData.quality.score} colorClass={performanceData.quality.color} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold">Valuation</p>
+                             <Link href="/academy/valuation-metrics" className="text-sm font-semibold hover:underline text-foreground">Valuation</Link>
                              <ScorePill label={performanceData.valuation.label} score={performanceData.valuation.score} colorClass={performanceData.valuation.color} />
                         </div>
                          <div>
-                            <p className="text-sm font-semibold">Financial</p>
+                            <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground">Financial</Link>
                             <ScorePill label={performanceData.financial.label} score={performanceData.financial.score} colorClass={performanceData.financial.color} />
                         </div>
                     </div>
@@ -335,14 +343,14 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                           <OverviewTerm term="Open" value={stock.open.toFixed(2)} explanation="The price at which the stock first traded when the market opened." />
-                           <OverviewTerm term="High" value={stock.high.toFixed(2)} explanation="The highest price the stock reached during the trading day." />
-                           <OverviewTerm term="Low" value={stock.low.toFixed(2)} explanation="The lowest price the stock fell to during the trading day." />
-                           <OverviewTerm term="Prev. Close" value={stock.close.toFixed(2)} explanation="The stock's closing price on the previous trading day." />
+                           <OverviewTerm term="Open" value={stock.open.toFixed(2)} explanation="The price at which the stock first traded when the market opened." academyId="basic-trading-terms" />
+                           <OverviewTerm term="High" value={stock.high.toFixed(2)} explanation="The highest price the stock reached during the trading day." academyId="basic-trading-terms" />
+                           <OverviewTerm term="Low" value={stock.low.toFixed(2)} explanation="The lowest price the stock fell to during the trading day." academyId="basic-trading-terms" />
+                           <OverviewTerm term="Prev. Close" value={stock.close.toFixed(2)} explanation="The stock's closing price on the previous trading day." academyId="basic-trading-terms" />
                            {financials && financials.yearly[0] &&
                             <>
-                               <OverviewTerm term="Latest Revenue (Cr)" value={financials.yearly[0].revenue.toLocaleString('en-IN')} explanation="The total amount of income a company generates from its primary operations, shown for the last full financial year." />
-                               <OverviewTerm term="Latest Profit (Cr)" value={financials.yearly[0].netProfit.toLocaleString('en-IN')} explanation="The company's profit after all expenses, including taxes, have been paid for the last full financial year." />
+                               <OverviewTerm term="Latest Revenue (Cr)" value={financials.yearly[0].revenue.toLocaleString('en-IN')} explanation="The total amount of income a company generates from its primary operations, shown for the last full financial year." academyId="understanding-financials" />
+                               <OverviewTerm term="Latest Profit (Cr)" value={financials.yearly[0].netProfit.toLocaleString('en-IN')} explanation="The company's profit after all expenses, including taxes, have been paid for the last full financial year." academyId="understanding-financials" />
                             </>
                            }
                         </div>

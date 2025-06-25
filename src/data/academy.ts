@@ -61,6 +61,25 @@ const courseModules: AcademyModule[] = [
             }
         ]
     },
+    {
+        id: 'basic-trading-terms',
+        level: 'Beginner',
+        title: 'Basic Trading Terms (OHLC)',
+        explanation: "Open, High, Low, and Close (OHLC) are four of the most important pieces of information about a stock for a given period. 'Open' is the price at which the stock first traded. 'High' is the highest price it reached. 'Low' is the lowest price it reached. 'Close' is the last price at which it traded before the market closed. These values are fundamental to reading stock charts.",
+        example: "If a stock opens at ₹100, reaches a high of ₹105, drops to a low of ₹98, and then closes at ₹103, its OHLC for the day is 100, 105, 98, 103. This data is often represented visually as a candlestick on a chart.",
+        quiz: [
+            {
+                question: "What does the 'Open' price signify?",
+                options: ["The highest price of the day", "The first trading price of the day", "The last trading price of the day", "The average price of the day"],
+                correctAnswer: "The first trading price of the day"
+            },
+            {
+                question: "Which of these four values indicates the peak price a stock reached?",
+                options: ["Open", "High", "Low", "Close"],
+                correctAnswer: "High"
+            }
+        ]
+    },
     // Intermediate
     {
         id: 'market-vs-limit-orders',
@@ -100,7 +119,45 @@ const courseModules: AcademyModule[] = [
             }
         ]
     },
+     {
+        id: 'understanding-financials',
+        level: 'Intermediate',
+        title: 'Understanding Key Financials',
+        explanation: "A company's financial statements tell the story of its health. 'Revenue' is the total money a company earns from its sales before any expenses are deducted. It's the 'top line'. 'Net Profit', or the 'bottom line', is what's left after all expenses, including taxes, have been paid. 'Debt' is the money the company has borrowed and must repay. A growing revenue and profit with manageable debt is a sign of a healthy company.",
+        example: "A company has ₹100 Cr in Revenue. After paying for materials, salaries, and taxes, it has ₹15 Cr left. This is its Net Profit. It also has ₹50 Cr in loans (Debt). An investor would look to see if the profit is enough to comfortably handle its debt payments and still grow.",
+        quiz: [
+            {
+                question: "What is another term for a company's Revenue?",
+                options: ["Bottom Line", "Net Income", "Top Line", "Operating Income"],
+                correctAnswer: "Top Line"
+            },
+            {
+                question: "Which metric represents a company's earnings after all expenses are paid?",
+                options: ["Revenue", "Debt", "Gross Profit", "Net Profit"],
+                correctAnswer: "Net Profit"
+            }
+        ]
+    },
     // Advanced
+    {
+        id: 'valuation-metrics',
+        level: 'Advanced',
+        title: 'Valuation Metrics',
+        explanation: "Valuation metrics help investors determine if a stock is fairly priced. The Price-to-Earnings (P/E) ratio compares the stock price to its earnings. The Price-to-Book (P/B) ratio compares the price to the company's book value (assets minus liabilities). Return on Equity (ROE) measures how efficiently a company uses shareholder money to generate profits. A high ROE is generally favorable. These metrics are best used to compare companies in the same industry.",
+        example: "Company A has a P/E of 15 and Company B has a P/E of 30. Superficially, Company A seems 'cheaper'. But if Company B has a much higher ROE, it might justify its higher valuation because it's better at generating profits with its assets.",
+        quiz: [
+            {
+                question: "Which ratio compares a company's stock price to its earnings per share?",
+                options: ["P/B Ratio", "ROE", "Debt-to-Equity Ratio", "P/E Ratio"],
+                correctAnswer: "P/E Ratio"
+            },
+            {
+                question: "What does ROE (Return on Equity) measure?",
+                options: ["The company's total debt", "The company's total sales", "How efficiently the company generates profit from shareholder money", "The company's stock price volatility"],
+                correctAnswer: "How efficiently the company generates profit from shareholder money"
+            }
+        ]
+    },
     {
         id: 'technical-indicators',
         level: 'Advanced',
