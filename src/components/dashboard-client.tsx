@@ -68,14 +68,14 @@ const StockWatchlist = ({ stocks, selectedStock, onSelectStock, searchTerm, setS
     }, [searchTerm, stocks]);
 
     return (
-        <aside className="w-full md:w-[280px] border-b md:border-b-0 md:border-r flex flex-col shrink-0">
+        <aside className="w-full md:w-[280px] h-2/5 md:h-auto border-b md:border-b-0 md:border-r flex flex-col shrink-0">
             <div className="p-2 border-b">
                 <div className="relative">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search..." className="pl-8 h-9" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
             </div>
-            <div className="overflow-y-auto h-[40vh] md:h-auto md:flex-1">
+            <div className="overflow-y-auto flex-1">
                 {filteredStocks.map(stock => {
                     const isPositive = stock.change >= 0;
                     return (
@@ -437,7 +437,7 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
     
     return (
         <div className="flex-1 flex flex-col h-full">
-            <div className="p-3 border-b flex justify-between items-center">
+            <div className="p-3 border-b flex justify-between items-center shrink-0">
                 <div>
                     <h2 className="text-lg md:text-xl font-bold font-headline">{stock.name} ({stock.symbol})</h2>
                     <p className="text-sm text-muted-foreground">{stock.sector}</p>
@@ -445,49 +445,51 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
                 <Button onClick={() => setTradeDialogOpen(true)}>Trade</Button>
             </div>
             
-            <div className="p-3 h-60 md:h-80">
-                 <ChartContainer config={chartConfig} className="h-full w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
-                                </linearGradient>
-                            </defs>
-                            <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
-                            <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
-                            <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                 </ChartContainer>
-            </div>
+            <div className="flex-1 flex flex-col overflow-y-auto">
+                <div className="p-3 h-60 md:h-80 shrink-0">
+                     <ChartContainer config={chartConfig} className="h-full w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
+                                    </linearGradient>
+                                </defs>
+                                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
+                                <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
+                                <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                     </ChartContainer>
+                </div>
 
-            <div className="p-3 space-y-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Overview</CardTitle>
-                        <CardDescription>
-                            To understand these terms, <Link href="/academy" className="text-primary hover:underline">visit the Academy</Link>.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                           <OverviewTerm term="Open" value={stock.open.toFixed(2)} explanation="The price at which the stock first traded when the market opened." academyId="basic-trading-terms" />
-                           <OverviewTerm term="High" value={stock.high.toFixed(2)} explanation="The highest price the stock reached during the trading day." academyId="basic-trading-terms" />
-                           <OverviewTerm term="Low" value={stock.low.toFixed(2)} explanation="The lowest price the stock fell to during the trading day." academyId="basic-trading-terms" />
-                           <OverviewTerm term="Prev. Close" value={stock.close.toFixed(2)} explanation="The stock's closing price on the previous trading day." academyId="basic-trading-terms" />
-                           {financials && financials.yearly[0] &&
-                            <>
-                               <OverviewTerm term="Latest Revenue (Cr)" value={financials.yearly[0].revenue.toLocaleString('en-IN')} explanation="The total amount of income a company generates from its primary operations, shown for the last full financial year." academyId="understanding-financials" />
-                               <OverviewTerm term="Latest Profit (Cr)" value={financials.yearly[0].netProfit.toLocaleString('en-IN')} explanation="The company's profit after all expenses, including taxes, have been paid for the last full financial year." academyId="understanding-financials" />
-                            </>
-                           }
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="p-3 space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Overview</CardTitle>
+                            <CardDescription>
+                                To understand these terms, <Link href="/academy" className="text-primary hover:underline">visit the Academy</Link>.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                               <OverviewTerm term="Open" value={stock.open.toFixed(2)} explanation="The price at which the stock first traded when the market opened." academyId="basic-trading-terms" />
+                               <OverviewTerm term="High" value={stock.high.toFixed(2)} explanation="The highest price the stock reached during the trading day." academyId="basic-trading-terms" />
+                               <OverviewTerm term="Low" value={stock.low.toFixed(2)} explanation="The lowest price the stock fell to during the trading day." academyId="basic-trading-terms" />
+                               <OverviewTerm term="Prev. Close" value={stock.close.toFixed(2)} explanation="The stock's closing price on the previous trading day." academyId="basic-trading-terms" />
+                               {financials && financials.yearly[0] &&
+                                <>
+                                   <OverviewTerm term="Latest Revenue (Cr)" value={financials.yearly[0].revenue.toLocaleString('en-IN')} explanation="The total amount of income a company generates from its primary operations, shown for the last full financial year." academyId="understanding-financials" />
+                                   <OverviewTerm term="Latest Profit (Cr)" value={financials.yearly[0].netProfit.toLocaleString('en-IN')} explanation="The company's profit after all expenses, including taxes, have been paid for the last full financial year." academyId="understanding-financials" />
+                                </>
+                               }
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                <PerformanceOverview stock={stock} />
+                    <PerformanceOverview stock={stock} />
+                </div>
             </div>
             
             <TradeDialog stock={stock} isOpen={isTradeDialogOpen} onOpenChange={setTradeDialogOpen} />
@@ -511,9 +513,9 @@ export default function DashboardClient() {
     }, [tradableStocks, selectedStock]);
 
     return (
-        <div className="flex flex-col md:h-[calc(100vh-57px)] bg-background text-foreground">
+        <div className="flex flex-col h-[calc(100vh-57px)] bg-background text-foreground">
             <MarketIndices />
-            <div className="flex flex-col md:flex-row flex-1 border-t md:overflow-hidden">
+            <div className="flex flex-col md:flex-row flex-1 border-t overflow-hidden">
                 <StockWatchlist 
                     stocks={tradableStocks} 
                     selectedStock={selectedStock}
@@ -521,10 +523,11 @@ export default function DashboardClient() {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
-                <main className="flex-1 md:overflow-y-auto">
+                <main className="flex-1 overflow-y-auto">
                     <StockViewer stock={selectedStock} />
                 </main>
             </div>
         </div>
     );
 }
+
