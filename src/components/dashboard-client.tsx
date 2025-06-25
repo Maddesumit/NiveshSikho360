@@ -36,9 +36,9 @@ const MarketIndices = () => {
         if (!index) return <Skeleton className="h-10 w-48" />;
         const isPositive = index.change >= 0;
         return (
-            <div className="flex items-center gap-4">
-                <span className="font-semibold text-sm">{index.name}</span>
-                <div className={cn("font-semibold text-sm", isPositive ? "text-green-500" : "text-red-500")}>
+            <div className="flex items-center gap-2 md:gap-4">
+                <span className="font-semibold text-xs md:text-sm">{index.name}</span>
+                <div className={cn("font-semibold text-xs md:text-sm", isPositive ? "text-green-500" : "text-red-500")}>
                     {index.price.toFixed(2)}
                 </div>
                 <div className={cn("text-xs flex items-center", isPositive ? "text-green-500" : "text-red-500")}>
@@ -50,7 +50,7 @@ const MarketIndices = () => {
     }
 
     return (
-        <div className="flex items-center gap-6 p-2 border-b">
+        <div className="flex items-center gap-2 md:gap-6 p-2 border-b flex-wrap">
             <IndexCard index={sensex} />
             <IndexCard index={nifty} />
         </div>
@@ -68,14 +68,14 @@ const StockWatchlist = ({ stocks, selectedStock, onSelectStock, searchTerm, setS
     }, [searchTerm, stocks]);
 
     return (
-        <aside className="w-[280px] border-r flex flex-col shrink-0">
+        <aside className="w-full md:w-[280px] border-b md:border-b-0 md:border-r flex flex-col shrink-0">
             <div className="p-2 border-b">
                 <div className="relative">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search..." className="pl-8 h-9" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="overflow-y-auto h-[40vh] md:h-auto md:flex-1">
                 {filteredStocks.map(stock => {
                     const isPositive = stock.change >= 0;
                     return (
@@ -198,7 +198,7 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
             </div>
             <Card>
                 <CardHeader>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle>Sector Trend (#{performanceData.sectorRank})</CardTitle>
                         <Badge variant="outline">{performanceData.cap}</Badge>
                         <Badge variant="outline">{stock.sector}</Badge>
@@ -299,8 +299,8 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
             </Card>
 
             <Card>
-                <CardContent className="p-0 flex">
-                    <div className="w-1/3 p-4 border-r space-y-4">
+                <CardContent className="p-0 flex flex-col md:flex-row">
+                    <div className="w-full md:w-1/3 p-4 border-b md:border-b-0 md:border-r space-y-4">
                         <div>
                             <TooltipProvider>
                                 <Tooltip>
@@ -344,8 +344,8 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
                             <ScorePill label={performanceData.financial.label} score={performanceData.financial.score} colorClass={performanceData.financial.color} />
                         </div>
                     </div>
-                    <div className="w-2/3 p-4">
-                        <div className="grid grid-cols-3 gap-4">
+                    <div className="w-full md:w-2/3 p-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                            <div className="text-center">
                                 <TooltipProvider>
                                     <Tooltip>
@@ -425,7 +425,7 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
 
     if (!stock) {
         return (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground p-8 text-center">
                 <p>Select a stock from the list to view details.</p>
             </div>
         );
@@ -439,13 +439,13 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
         <div className="flex-1 flex flex-col h-full">
             <div className="p-3 border-b flex justify-between items-center">
                 <div>
-                    <h2 className="text-xl font-bold font-headline">{stock.name} ({stock.symbol})</h2>
+                    <h2 className="text-lg md:text-xl font-bold font-headline">{stock.name} ({stock.symbol})</h2>
                     <p className="text-sm text-muted-foreground">{stock.sector}</p>
                 </div>
                 <Button onClick={() => setTradeDialogOpen(true)}>Trade</Button>
             </div>
             
-            <div className="p-3 h-80">
+            <div className="p-3 h-60 md:h-80">
                  <ChartContainer config={chartConfig} className="h-full w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
@@ -511,9 +511,9 @@ export default function DashboardClient() {
     }, [tradableStocks, selectedStock]);
 
     return (
-        <div className="flex flex-col h-[calc(100vh-57px)] bg-background text-foreground">
+        <div className="flex flex-col md:h-[calc(100vh-57px)] bg-background text-foreground">
             <MarketIndices />
-            <div className="flex flex-1 border-t overflow-hidden">
+            <div className="flex flex-col md:flex-row flex-1 border-t md:overflow-hidden">
                 <StockWatchlist 
                     stocks={tradableStocks} 
                     selectedStock={selectedStock}
@@ -521,7 +521,7 @@ export default function DashboardClient() {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
-                <main className="flex-1 overflow-y-auto">
+                <main className="flex-1 md:overflow-y-auto">
                     <StockViewer stock={selectedStock} />
                 </main>
             </div>
