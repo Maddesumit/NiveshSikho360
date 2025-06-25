@@ -5,22 +5,23 @@ import { useState, useMemo, useEffect } from "react";
 import { useNiveshStore } from "@/hooks/use-trade-store";
 import type { Stock } from "@/data/stocks";
 import { Input } from "./ui/input";
-import { Search, ArrowUp, ArrowDown } from "lucide-react";
+import { Search, ArrowUp, ArrowDown, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "./ui/card";
 import { Button } from "./ui/button";
 import { AreaChart, Area, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "./ui/chart";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Skeleton } from "./ui/skeleton";
 import TradeDialog from "./trade-dialog";
 import { getFinancials, FinancialData } from "@/data/financials";
+import { pseudoRandomGenerator } from "@/data/stocks";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 
 const MarketIndices = () => {
@@ -101,6 +102,40 @@ const StockWatchlist = ({ stocks, selectedStock, onSelectStock, searchTerm, setS
     )
 }
 
+const OverviewTerm = ({ term, value, explanation }: { term: string, value: string | number, explanation: string }) => (
+    <div>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger className="flex items-center gap-1 text-muted-foreground text-sm cursor-help">
+                    <span>{term}</span>
+                    <Info className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                    <p>{explanation}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+        <p className="font-semibold">{value}</p>
+    </div>
+);
+
+const RatioTerm = ({ term, value, explanation }: { term: string, value: string, explanation: string }) => (
+     <div>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger className="flex items-center gap-1 text-sm text-muted-foreground cursor-help">
+                    <span>{term}</span>
+                    <Info className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                    <p>{explanation}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+        <p className="font-semibold text-lg">{value}</p>
+    </div>
+)
+
 
 const StockViewer = ({ stock }: { stock: Stock | null }) => {
     const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
@@ -111,6 +146,36 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
         setFinancials(getFinancials(stock.symbol));
       }
     }, [stock]);
+
+    const fundamentalRatios = useMemo(() => {
+        if (!stock || !financials) return null;
+        const rand = pseudoRandomGenerator(stock.symbol + 'ratios');
+        const latestYearly = financials.yearly[0];
+        const prevYearly = financials.yearly[1];
+        if (!latestYearly) return null;
+
+        const eps = latestYearly.netProfit > 0 ? (latestYearly.netProfit / (rand() * 50 + 50)) * 10 : 0.1; // simplified EPS calc
+        const peRatio = eps > 0 ? stock.price / eps : 0;
+        const pbRatio = 1.5 + rand() * 8.5; // Mock P/B between 1.5 and 10
+        
+        let growth = 0;
+        if(prevYearly && prevYearly.netProfit > 0) {
+            growth = ((latestYearly.netProfit - prevYearly.netProfit) / prevYearly.netProfit) * 100;
+        } else {
+            growth = (rand() * 20); // Mock growth
+        }
+        
+        const pegRatio = peRatio > 0 && growth > 0 ? peRatio / growth : 0;
+        const roe = 5 + rand() * 20; // Mock ROE between 5% and 25%
+
+        return {
+            pe: peRatio.toFixed(2),
+            pb: pbRatio.toFixed(2),
+            peg: pegRatio.toFixed(2),
+            roe: `${roe.toFixed(2)}%`
+        };
+    }, [stock, financials]);
+
 
     if (!stock) {
         return (
@@ -152,42 +217,59 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
                  </ChartContainer>
             </div>
 
-            <div className="p-3">
+            <div className="p-3 space-y-4">
                 <Card>
                     <CardHeader>
                         <CardTitle>Overview</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                           <div>
-                                <p className="text-muted-foreground">Open</p>
-                                <p className="font-semibold">{stock.open.toFixed(2)}</p>
-                           </div>
-                            <div>
-                                <p className="text-muted-foreground">High</p>
-                                <p className="font-semibold">{stock.high.toFixed(2)}</p>
-                           </div>
-                            <div>
-                                <p className="text-muted-foreground">Low</p>
-                                <p className="font-semibold">{stock.low.toFixed(2)}</p>
-                           </div>
-                           <div>
-                                <p className="text-muted-foreground">Prev. Close</p>
-                                <p className="font-semibold">{stock.close.toFixed(2)}</p>
-                           </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                           <OverviewTerm term="Open" value={stock.open.toFixed(2)} explanation="The price at which the stock first traded when the market opened." />
+                           <OverviewTerm term="High" value={stock.high.toFixed(2)} explanation="The highest price the stock reached during the trading day." />
+                           <OverviewTerm term="Low" value={stock.low.toFixed(2)} explanation="The lowest price the stock fell to during the trading day." />
+                           <OverviewTerm term="Prev. Close" value={stock.close.toFixed(2)} explanation="The stock's closing price on the previous trading day." />
                            {financials && financials.yearly[0] &&
                             <>
-                                <div>
-                                    <p className="text-muted-foreground">Latest Revenue (Cr)</p>
-                                    <p className="font-semibold">{financials.yearly[0].revenue.toLocaleString('en-IN')}</p>
-                                </div>
-                                <div>
-                                    <p className="text-muted-foreground">Latest Profit (Cr)</p>
-                                    <p className="font-semibold">{financials.yearly[0].netProfit.toLocaleString('en-IN')}</p>
-                                </div>
+                               <OverviewTerm term="Latest Revenue (Cr)" value={financials.yearly[0].revenue.toLocaleString('en-IN')} explanation="The total amount of income a company generates from its primary operations, shown for the last full financial year." />
+                               <OverviewTerm term="Latest Profit (Cr)" value={financials.yearly[0].netProfit.toLocaleString('en-IN')} explanation="The company's profit after all expenses, including taxes, have been paid for the last full financial year." />
                             </>
                            }
                         </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Fundamental Ratios</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                         <Tabs defaultValue="valuation" className="w-full">
+                            <TabsList>
+                                <TabsTrigger value="valuation">Valuation Ratio</TabsTrigger>
+                                <TabsTrigger value="growth">Growth</TabsTrigger>
+                                <TabsTrigger value="financial">Financial</TabsTrigger>
+                                <TabsTrigger value="dividend">Dividend</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="valuation" className="pt-4">
+                                {fundamentalRatios ? (
+                                    <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                                        <RatioTerm term="PE Ratio" value={fundamentalRatios.pe} explanation="Price-to-Earnings ratio. A high P/E can mean a stock's price is high relative to earnings (overvalued), or investors expect high growth." />
+                                        <RatioTerm term="Price to Book Value" value={fundamentalRatios.pb} explanation="Compares a company's market value to its book value. A lower P/B ratio could mean the stock is undervalued." />
+                                        <RatioTerm term="PEG Ratio" value={fundamentalRatios.peg} explanation="Price/Earnings to Growth ratio. Compares the P/E ratio to earnings growth. A ratio under 1 is often considered good." />
+                                        <RatioTerm term="ROE (Latest)" value={fundamentalRatios.roe} explanation="Return on Equity. Measures how effectively a company is using its equity to generate profits. Higher is generally better." />
+                                    </div>
+                                ) : <Skeleton className="h-24 w-full" />}
+                            </TabsContent>
+                            <TabsContent value="growth" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
+                                Growth ratios will be displayed here in a future update.
+                            </TabsContent>
+                             <TabsContent value="financial" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
+                                Financial strength ratios will be displayed here in a future update.
+                            </TabsContent>
+                             <TabsContent value="dividend" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
+                                Dividend-related ratios will be displayed here in a future update.
+                            </TabsContent>
+                        </Tabs>
                     </CardContent>
                 </Card>
             </div>
@@ -206,7 +288,9 @@ export default function DashboardClient() {
 
     useEffect(() => {
         if (!selectedStock && tradableStocks.length > 0) {
-            setSelectedStock(tradableStocks[0]);
+            // Find a common stock to start with, e.g., RELIANCE
+            const defaultStock = tradableStocks.find(s => s.symbol === 'RELIANCE') || tradableStocks[0];
+            setSelectedStock(defaultStock);
         }
     }, [tradableStocks, selectedStock]);
 
