@@ -110,40 +110,31 @@ const LandingPage = () => {
                 {/* Left Column */}
                 <div className="space-y-6 text-center md:text-left">
                     <h1 className="text-4xl lg:text-6xl font-bold font-headline tracking-tight">
-                    Stock Market is the Best Way to <span className="text-primary">Invest your Money</span>
+                        Learn to Invest. <span className="text-primary">Master the Market.</span>
                     </h1>
                     <p className="text-lg text-muted-foreground">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the.
+                        A hyper-realistic stock market simulator for the Indian market. Practice with ₹1,00,000 virtual cash and gain confidence before you invest for real.
                     </p>
-                    <Link href="#features" className={cn(buttonVariants({ variant: "link" }), "text-lg text-primary p-0 h-auto font-semibold")}>
-                    Learn More <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
+                    <div className="flex justify-center md:justify-start items-center gap-4">
+                        <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
+                            Get Started Free
+                            <Rocket className="ml-2" />
+                        </Link>
+                        <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'lg' }))}>
+                            Sign In
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Right Column */}
                 <div className="relative mt-10 md:mt-0">
                     <Image
-                        src="https://placehold.co/800x600.png"
-                        alt="Person analyzing stock market chart"
+                        src="/hero.jpg"
+                        alt="A modern desk setup with stock charts on screen"
                         width={800}
                         height={600}
-                        className="rounded-lg object-cover brightness-50"
-                        data-ai-hint="stock trading desk"
+                        className="rounded-lg object-cover"
                     />
-                    <svg
-                        className="absolute top-0 left-0 w-full h-full opacity-60"
-                        viewBox="0 0 400 250"
-                        preserveAspectRatio="none"
-                    >
-                    <path
-                        d="M20 180 L40 120 L60 140 L100 130 L120 100 L140 60 L160 80 L200 70 L220 100 L240 140 L260 120 L300 150 L320 120 L340 80 L360 110 L400 90"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                    </svg>
                 </div>
 
                 </div>
