@@ -27,6 +27,7 @@ import {
   HelpCircle,
   Rocket,
   Loader,
+  Store,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useAuth } from "@/hooks/use-auth";
@@ -55,9 +56,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [user, loading, router, pathname, isPublicPage]);
 
   const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Watchlist", icon: LayoutDashboard },
+    { href: "/markets", label: "Markets", icon: Store },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
-    { href: "/news", label: "Market News", icon: Newspaper },
     { href: "/academy", label: "Academy", icon: BookOpen },
     { href: "/glossary", label: "Glossary", icon: HelpCircle },
   ];
@@ -121,5 +122,3 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </SidebarProvider>
   );
 }
-
-    

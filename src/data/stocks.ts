@@ -74,6 +74,9 @@ const calculateStats = (price: number, history: { date: string; price: number }[
 };
 
 const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'changePercent' | 'history'>[] = [
+  // Indices - treated as stocks for state management
+  { symbol: "^NSEI", name: "NIFTY 50", sector: "Index", price: 25044.35 },
+  { symbol: "^BSESN", name: "SENSEX", sector: "Index", price: 82055.11 },
   // Nifty 50
   { symbol: "RELIANCE", name: "Reliance Industries Ltd", sector: "Energy", price: 2950.75 },
   { symbol: "TCS", name: "Tata Consultancy Services", sector: "Information Technology", price: 3850.50 },
@@ -98,15 +101,15 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "JSWSTEEL", name: "JSW Steel Ltd", sector: "Materials", price: 910.40 },
   { symbol: "NTPC", name: "NTPC Ltd", sector: "Utilities", price: 360.55 },
   { symbol: "ADANIENT", name: "Adani Enterprises Ltd", sector: "Conglomerate", price: 3250.00 },
-  { symbol: "ADANIPORTS", name: "Adani Ports &amp; SEZ Ltd", sector: "Industrials", price: 1350.10 },
+  { symbol: "ADANIPORTS", name: "Adani Ports & SEZ Ltd", sector: "Industrials", price: 1350.10 },
   { symbol: "ULTRACEMCO", name: "UltraTech Cement Ltd", sector: "Materials", price: 10800.00 },
   { symbol: "ASIANPAINT", name: "Asian Paints Ltd", sector: "Materials", price: 2890.60 },
   { symbol: "AXISBANK", name: "Axis Bank Ltd", sector: "Financials", price: 1225.00 },
   { symbol: "BAJAJFINSV", name: "Bajaj Finserv Ltd", sector: "Financials", price: 1580.90 },
-  { symbol: "M_M", name: "Mahindra &amp; Mahindra Ltd", sector: "Automobile", price: 2850.40 },
+  { symbol: "M_M", name: "Mahindra & Mahindra Ltd", sector: "Automobile", price: 2850.40 },
   { symbol: "TITAN", name: "Titan Company Ltd", sector: "Consumer Discretionary", price: 3500.75 },
   { symbol: "POWERGRID", name: "Power Grid Corp of India", sector: "Utilities", price: 325.10 },
-  { symbol: "ONGC", name: "Oil &amp; Natural Gas Corp", sector: "Energy", price: 268.50 },
+  { symbol: "ONGC", name: "Oil & Natural Gas Corp", sector: "Energy", price: 268.50 },
   { symbol: "BAJAJ-AUTO", name: "Bajaj Auto Ltd", sector: "Automobile", price: 9700.00 },
   { symbol: "INDUSINDBK", name: "IndusInd Bank Ltd", sector: "Financials", price: 1490.80 },
   { symbol: "HINDALCO", name: "Hindalco Industries Ltd", sector: "Materials", price: 650.20 },
@@ -116,14 +119,14 @@ const stocksData: Omit<Stock, 'open' | 'high' | 'low' | 'close' | 'change' | 'ch
   { symbol: "TATACONSUM", name: "Tata Consumer Products Ltd", sector: "Consumer Staples", price: 1100.00 },
   { symbol: "SBILIFE", name: "SBI Life Insurance Company", sector: "Financials", price: 1450.50 },
   
-  // Mid-Cap Stocks
+  // Mid-Cap & Small-Cap Stocks
+  { symbol: "APOLLOHOSP", name: "Apollo Hospitals Enterprise", sector: "Healthcare", price: 6150.00 },
+  { symbol: "PAYTM", name: "One97 Communications Ltd", sector: "Financials", price: 410.50 },
   { symbol: "DMART", name: "Avenue Supermarts Ltd", sector: "Consumer Staples", price: 4750.00 },
   { symbol: "PIDILITIND", name: "Pidilite Industries Ltd", sector: "Materials", price: 3100.80 },
   { symbol: "HAVELLS", name: "Havells India Ltd", sector: "Industrials", price: 1890.75 },
   { symbol: "ZOMATO", name: "Zomato Ltd", sector: "Consumer Discretionary", price: 190.45 },
-  { symbol: "IRCTC", name: "Indian Railway Catering &amp; Tour", sector: "Consumer Discretionary", price: 1015.20 },
-  
-  // Small-Cap Stocks
+  { symbol: "IRCTC", name: "Indian Railway Catering & Tour", sector: "Consumer Discretionary", price: 1015.20 },
   { symbol: "IEX", name: "Indian Energy Exchange Ltd", sector: "Financials", price: 178.60 },
   { symbol: "TRIDENT", name: "Trident Ltd", sector: "Materials", price: 38.20 },
   { symbol: "SUZLON", name: "Suzlon Energy Ltd", sector: "Energy", price: 52.80 },
