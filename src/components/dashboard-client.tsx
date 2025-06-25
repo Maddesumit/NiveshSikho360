@@ -165,6 +165,18 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
             return { label: 'Below Average', color: 'text-red-600', dot: 'bg-red-500' };
         };
         
+        const rawMarketCap = stock.price * (50000000 + rand() * 1000000000);
+        
+        const formatMarketCap = (value: number) => {
+            if (value >= 10000000) {
+                return `₹${(value / 10000000).toFixed(2)} Cr`;
+            }
+            if (value >= 100000) {
+                return `₹${(value / 100000).toFixed(2)} Lakh`;
+            }
+            return `₹${value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+        };
+
         return {
             quality: { score: qualityScore, ...getScoreConfig(qualityScore, 'quality') },
             valuation: { score: valuationScore, ...getScoreConfig(valuationScore, 'valuation') },
@@ -173,7 +185,7 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
             sectorTotal: Math.floor(rand() * 10) + 15,
             cap: stock.price > 10000 ? 'LARGE CAP' : stock.price > 1000 ? 'MID CAP' : 'SMALL CAP',
             shortTermPositive: rand() > 0.5,
-            marketCap: (stock.price * (50000000 + rand() * 1000000000)).toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+            marketCap: formatMarketCap(rawMarketCap),
             oneYearReturn: (rand() * 80 - 30),
             sectorReturn: (rand() * 40 - 15),
             marketReturn: (rand() * 20 - 5),
