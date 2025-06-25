@@ -24,14 +24,12 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import TutorialGuide from "./tutorial-guide";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useAuth();
   const [open, setOpen] = React.useState(false);
-  const [isTutorialOpen, setTutorialOpen] = React.useState(false);
 
   const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup' || pathname === '/future-plans';
 
@@ -137,16 +135,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         {children}
       </main>
-      <Button
-        variant="outline"
-        size="icon"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40"
-        onClick={() => setTutorialOpen(true)}
-        aria-label="Open Tutorial"
-      >
-        <HelpCircle className="h-7 w-7" />
-      </Button>
-      <TutorialGuide isOpen={isTutorialOpen} onOpenChange={setTutorialOpen} />
     </div>
   );
 }
