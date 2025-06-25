@@ -135,19 +135,21 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
             </div>
             
             <div className="p-3 h-80">
-                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                        <defs>
-                            <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
-                                <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
-                            </linearGradient>
-                        </defs>
-                        <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
-                        <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
-                        <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
-                    </AreaChart>
-                </ResponsiveContainer>
+                 <ChartContainer config={chartConfig} className="h-full w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
+                            <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
+                            <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
+                            <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                 </ChartContainer>
             </div>
 
             <div className="p-3">
