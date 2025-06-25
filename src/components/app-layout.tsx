@@ -126,12 +126,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </span>
               </div>
             )}
-             <a href="https://github.com/FirebaseExtended/ai-apps-collection-node" target="_blank" rel="noopener noreferrer" className="hidden md:block">
-                <Button variant="ghost" size="icon">
-                    <Github className="h-5 w-5" />
-                    <span className="sr-only">GitHub</span>
-                </Button>
-            </a>
            <UserNav />
            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
