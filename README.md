@@ -58,11 +58,13 @@ cd niveshsikho360
 
 ### 2. Install Dependencies
 
-Install all the required npm packages.
+Install all the required npm packages. This command reads the `package.json` file and installs all the necessary dependencies.
 
 ```bash
 npm install
 ```
+
+A `requirements.txt` file is also included in the repository. While this format is typically used for Python projects, it is provided here for a quick, at-a-glance reference of the project's Node.js dependencies and their versions. The authoritative source for dependencies remains `package.json`.
 
 ### 3. Set Up Environment Variables
 
