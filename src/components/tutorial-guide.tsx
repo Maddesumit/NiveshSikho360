@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
-const TUTORIAL_KEY = 'niveshSikho360_tutorial_completed';
-
 const tutorialSteps = [
     {
         title: 'Welcome to NiveshSikho360!',
@@ -67,27 +65,25 @@ const tutorialSteps = [
     },
 ];
 
-export default function TutorialGuide() {
-    const [isOpen, setIsOpen] = useState(false);
+export default function TutorialGuide({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
-        const hasCompletedTutorial = localStorage.getItem(TUTORIAL_KEY);
-        if (!hasCompletedTutorial) {
-            setIsOpen(true);
+        // Reset to the first step whenever the dialog is opened
+        if (isOpen) {
+            setCurrentStep(0);
         }
-    }, []);
+    }, [isOpen]);
 
-    const completeTutorial = () => {
-        localStorage.setItem(TUTORIAL_KEY, 'true');
-        setIsOpen(false);
+    const handleClose = () => {
+        onOpenChange(false);
     };
 
     const handleNext = () => {
         if (currentStep < tutorialSteps.length - 1) {
             setCurrentStep(currentStep + 1);
         } else {
-            completeTutorial();
+            handleClose();
         }
     };
 
@@ -96,16 +92,12 @@ export default function TutorialGuide() {
             setCurrentStep(currentStep - 1);
         }
     };
-
-    if (!isOpen) {
-        return null;
-    }
     
     const step = tutorialSteps[currentStep];
     const progress = ((currentStep + 1) / tutorialSteps.length) * 100;
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && completeTutorial()}>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="font-headline">{step.title}</DialogTitle>
@@ -126,7 +118,7 @@ export default function TutorialGuide() {
                     <Progress value={progress} />
                 </div>
                 <DialogFooter className="flex justify-between w-full">
-                    <Button variant="outline" onClick={completeTutorial}>Skip Tutorial</Button>
+                    <Button variant="outline" onClick={handleClose}>Skip Tutorial</Button>
                     <div className="flex gap-2">
                         {currentStep > 0 && (
                             <Button variant="ghost" onClick={handlePrev}>
