@@ -106,18 +106,26 @@ const StockWatchlist = ({ stocks, selectedStock, onSelectStock, searchTerm, setS
 }
 
 const OverviewTerm = ({ term, value, explanation, academyId }: { term: string, value: string | number, explanation: string, academyId?: string }) => {
-    const TriggerContent = (
-        <TooltipTrigger className="flex items-center gap-1 text-muted-foreground text-sm cursor-help hover:underline">
-            <span>{term}</span>
+    const TermLabel = (
+        <span className="flex items-center gap-1 text-muted-foreground text-sm group-hover:text-foreground">
+            <span className={cn(academyId && "underline decoration-dashed underline-offset-2")}>{term}</span>
             <Info className="h-3 w-3" />
-        </TooltipTrigger>
+        </span>
     );
 
     return (
         <div>
             <TooltipProvider>
                 <Tooltip>
-                    {academyId ? <Link href={`/academy/${academyId}`}>{TriggerContent}</Link> : TriggerContent}
+                    <TooltipTrigger asChild>
+                        {academyId ? (
+                            <Link href={`/academy/${academyId}`} className="cursor-pointer group">
+                                {TermLabel}
+                            </Link>
+                        ) : (
+                            <span className="cursor-help">{TermLabel}</span>
+                        )}
+                    </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
                         <p>{explanation}</p>
                         {academyId && <p className="mt-2 text-primary text-xs font-semibold">Click to learn more in the Academy.</p>}
@@ -198,37 +206,93 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                      <div className="p-3 rounded-lg border bg-card text-center">
-                        <div className="flex items-center gap-2 text-sm justify-center">
-                            <div className={cn("w-2 h-2 rounded-full", performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
-                            <span>Short Term</span>
-                        </div>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help w-full">
+                                    <div className="flex items-center gap-2 text-sm justify-center">
+                                        <div className={cn("w-2 h-2 rounded-full", performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
+                                        <span>Short Term</span>
+                                        <Info className="h-3 w-3" />
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>An AI-driven prediction of the stock's likely price direction in the near future, based on technical indicators.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className={cn("font-bold", performanceData.shortTermPositive ? 'text-green-600' : 'text-red-600')}>
                             {performanceData.shortTermPositive ? 'Positive' : 'Negative'}
                         </p>
                     </div>
                      <div className="p-3 rounded-lg border bg-card text-center">
-                        <div className="flex items-center gap-2 text-sm justify-center">
-                            <div className={cn("w-2 h-2 rounded-full", !performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
-                            <span>Long Term</span>
-                        </div>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help w-full">
+                                    <div className="flex items-center gap-2 text-sm justify-center">
+                                        <div className={cn("w-2 h-2 rounded-full", !performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
+                                        <span>Long Term</span>
+                                        <Info className="h-3 w-3" />
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>An AI-driven prediction of the stock's likely price direction over a longer period, based on fundamental strength.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className={cn("font-bold", !performanceData.shortTermPositive ? 'text-green-600' : 'text-red-600')}>
                              {!performanceData.shortTermPositive ? 'Positive' : 'Negative'}
                         </p>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Market Cap</p>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help">
+                                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Market Cap <Info className="h-3 w-3" /></p>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p>The total market value of a company's outstanding shares. Calculated as Share Price × Total Number of Shares.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className="font-semibold">{performanceData.marketCap}</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">1 year Return</p>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help">
+                                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">1 year Return <Info className="h-3 w-3" /></p>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p>The percentage change in the stock's price over the last year.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className={cn("font-semibold", performanceData.oneYearReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.oneYearReturn.toFixed(2)}%</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Sector Return</p>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help">
+                                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Sector Return <Info className="h-3 w-3" /></p>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p>The average return of all stocks within the same industry sector over the last year.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className={cn("font-semibold", performanceData.sectorReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.sectorReturn.toFixed(2)}%</p>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Market Return</p>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger className="cursor-help">
+                                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">Market Return <Info className="h-3 w-3" /></p>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p>The average return of a major market index (like Nifty 50) over the last year.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <p className={cn("font-semibold", performanceData.marketReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.marketReturn.toFixed(2)}%</p>
                     </div>
                 </CardContent>
@@ -238,39 +302,99 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
                 <CardContent className="p-0 flex">
                     <div className="w-1/3 p-4 border-r space-y-4">
                         <div>
-                            <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground">Quality</Link>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground flex items-center gap-1">Quality <Info className="h-3 w-3" /></Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p>Assesses the company's long-term financial health and business stability. High-quality companies often have strong brands and consistent earnings.</p>
+                                        <p className="mt-2 text-primary text-xs font-semibold">Click to learn more in the Academy.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                             <ScorePill label={performanceData.quality.label} score={performanceData.quality.score} colorClass={performanceData.quality.color} />
                         </div>
                         <div>
-                             <Link href="/academy/valuation-metrics" className="text-sm font-semibold hover:underline text-foreground">Valuation</Link>
+                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link href="/academy/valuation-metrics" className="text-sm font-semibold hover:underline text-foreground flex items-center gap-1">Valuation <Info className="h-3 w-3" /></Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p>Compares the stock's current price to its financial performance to determine if it's cheap or expensive relative to its peers and its own history.</p>
+                                        <p className="mt-2 text-primary text-xs font-semibold">Click to learn more in the Academy.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                              <ScorePill label={performanceData.valuation.label} score={performanceData.valuation.score} colorClass={performanceData.valuation.color} />
                         </div>
                          <div>
-                            <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground">Financial</Link>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link href="/academy/understanding-financials" className="text-sm font-semibold hover:underline text-foreground flex items-center gap-1">Financial Trend <Info className="h-3 w-3" /></Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p>Analyzes the recent trend of the company's financials, such as revenue and profit growth. A positive trend is a good sign.</p>
+                                        <p className="mt-2 text-primary text-xs font-semibold">Click to learn more in the Academy.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                             <ScorePill label={performanceData.financial.label} score={performanceData.financial.score} colorClass={performanceData.financial.color} />
                         </div>
                     </div>
                     <div className="w-2/3 p-4">
                         <div className="grid grid-cols-3 gap-4">
                            <div className="text-center">
-                                <div className="flex items-center justify-center gap-2 text-sm">
-                                    <div className={cn("w-2 h-2 rounded-full", performanceData.capitalStructure.dot)}></div>
-                                    <span>Capital Structure</span>
-                                </div>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger className="cursor-help">
+                                            <div className="flex items-center justify-center gap-2 text-sm">
+                                                <div className={cn("w-2 h-2 rounded-full", performanceData.capitalStructure.dot)}></div>
+                                                <span>Capital Structure</span>
+                                                <Info className="h-3 w-3" />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                            <p>An evaluation of how a company finances its operations through a mix of debt and equity. A good structure has manageable debt.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                                 <p className={cn("font-bold", performanceData.capitalStructure.color)}>{performanceData.capitalStructure.label}</p>
                             </div>
                              <div className="text-center">
-                                <div className="flex items-center justify-center gap-2 text-sm">
-                                    <div className={cn("w-2 h-2 rounded-full", performanceData.growth.dot)}></div>
-                                    <span>Growth</span>
-                                </div>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger className="cursor-help">
+                                            <div className="flex items-center justify-center gap-2 text-sm">
+                                                <div className={cn("w-2 h-2 rounded-full", performanceData.growth.dot)}></div>
+                                                <span>Growth</span>
+                                                <Info className="h-3 w-3" />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                            <p>An assessment of the company's revenue and profit growth over time. Strong, consistent growth is a positive sign.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                                 <p className={cn("font-bold", performanceData.growth.color)}>{performanceData.growth.label}</p>
                             </div>
                              <div className="text-center">
-                                <div className="flex items-center justify-center gap-2 text-sm">
-                                    <div className={cn("w-2 h-2 rounded-full", performanceData.managementRisk.dot)}></div>
-                                    <span>Management Risk</span>
-                                </div>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger className="cursor-help">
+                                            <div className="flex items-center justify-center gap-2 text-sm">
+                                                <div className={cn("w-2 h-2 rounded-full", performanceData.managementRisk.dot)}></div>
+                                                <span>Management Risk</span>
+                                                 <Info className="h-3 w-3" />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                            <p>An evaluation of potential risks associated with the company's management team, such as high turnover or poor capital allocation decisions.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                                 <p className={cn("font-bold", performanceData.managementRisk.color)}>{performanceData.managementRisk.label}</p>
                             </div>
                         </div>
