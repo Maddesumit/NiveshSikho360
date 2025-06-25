@@ -12,6 +12,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription
 } from "./ui/card";
 import { Button } from "./ui/button";
 import { AreaChart, Area, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
@@ -21,7 +22,8 @@ import TradeDialog from "./trade-dialog";
 import { getFinancials, FinancialData } from "@/data/financials";
 import { pseudoRandomGenerator } from "@/data/stocks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Separator } from "./ui/separator";
+import { Badge } from "./ui/badge";
 
 
 const MarketIndices = () => {
@@ -119,23 +121,162 @@ const OverviewTerm = ({ term, value, explanation }: { term: string, value: strin
     </div>
 );
 
-const RatioTerm = ({ term, value, explanation }: { term: string, value: string, explanation: string }) => (
-     <div>
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger className="flex items-center gap-1 text-sm text-muted-foreground cursor-help">
-                    <span>{term}</span>
-                    <Info className="h-3 w-3" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                    <p>{explanation}</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-        <p className="font-semibold text-lg">{value}</p>
-    </div>
-)
+const PerformanceOverview = ({ stock }: { stock: Stock }) => {
+    const performanceData = useMemo(() => {
+        const rand = pseudoRandomGenerator(stock.symbol + 'performance');
+        const qualityScore = Math.floor(rand() * 5) + 1;
+        const valuationScore = Math.floor(rand() * 5) + 1;
+        const financialScore = Math.floor(rand() * 5) + 1;
 
+        const getScoreConfig = (score: number, type: 'quality' | 'valuation' | 'financial') => {
+            if (type === 'valuation') { // Lower is better for valuation
+                if (score >= 4) return { label: 'VERY CHEAP', color: 'bg-green-100 text-green-800' };
+                if (score === 3) return { label: 'FAIR', color: 'bg-yellow-100 text-yellow-800' };
+                if (score === 2) return { label: 'EXPENSIVE', color: 'bg-orange-100 text-orange-800' };
+                return { label: 'VERY EXPENSIVE', color: 'bg-red-100 text-red-800' };
+            }
+            // Higher is better for quality and financial
+            if (score >= 4) return { label: 'OUTSTANDING', color: 'bg-green-100 text-green-800' };
+            if (score === 3) return { label: 'AVERAGE', color: 'bg-yellow-100 text-yellow-800' };
+            if (score === 2) return { label: 'BELOW AVERAGE', color: 'bg-orange-100 text-orange-800' };
+            return { label: 'POOR', color: 'bg-red-100 text-red-800' };
+        };
+
+        const getStatusConfig = (value: number) => {
+            if (value > 2) return { label: 'Excellent', color: 'text-green-600', dot: 'bg-green-500' };
+            if (value > 1) return { label: 'Good', color: 'text-green-600', dot: 'bg-green-500' };
+            if (value > 0) return { label: 'Average', color: 'text-yellow-600', dot: 'bg-yellow-500' };
+            return { label: 'Below Average', color: 'text-red-600', dot: 'bg-red-500' };
+        };
+        
+        return {
+            quality: { score: qualityScore, ...getScoreConfig(qualityScore, 'quality') },
+            valuation: { score: valuationScore, ...getScoreConfig(valuationScore, 'valuation') },
+            financial: { score: financialScore, ...getScoreConfig(financialScore, 'financial') },
+            sectorRank: Math.floor(rand() * 10) + 1,
+            sectorTotal: Math.floor(rand() * 10) + 15,
+            cap: stock.price > 10000 ? 'LARGE CAP' : stock.price > 1000 ? 'MID CAP' : 'SMALL CAP',
+            shortTermPositive: rand() > 0.5,
+            marketCap: (stock.price * (50000000 + rand() * 1000000000)).toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+            oneYearReturn: (rand() * 80 - 30),
+            sectorReturn: (rand() * 40 - 15),
+            marketReturn: (rand() * 20 - 5),
+            capitalStructure: getStatusConfig(rand() * 4),
+            growth: getStatusConfig(rand() * 4),
+            managementRisk: getStatusConfig(rand() * 4),
+        };
+    }, [stock]);
+
+    const ScorePill = ({ label, score, colorClass }: {label: string, score: number, colorClass: string}) => (
+        <div className="flex items-center gap-2">
+            <Badge variant="outline" className={cn("font-bold border-2", colorClass, colorClass.replace('bg-', 'border-'))}>{label}</Badge>
+            <Badge variant="secondary" className="font-mono">{score}/5</Badge>
+        </div>
+    )
+
+    return (
+        <div className="space-y-4">
+            <h2 className="text-xl font-bold font-headline">Performance Overview</h2>
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center gap-2">
+                        <CardTitle>Sector Trend (#{performanceData.sectorRank})</CardTitle>
+                        <Badge variant="outline">{performanceData.cap}</Badge>
+                        <Badge variant="outline">{stock.sector}</Badge>
+                    </div>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                     <div className="p-3 rounded-lg border bg-card text-center">
+                        <div className="flex items-center gap-2 text-sm justify-center">
+                            <div className={cn("w-2 h-2 rounded-full", performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
+                            <span>Short Term</span>
+                        </div>
+                        <p className={cn("font-bold", performanceData.shortTermPositive ? 'text-green-600' : 'text-red-600')}>
+                            {performanceData.shortTermPositive ? 'Positive' : 'Negative'}
+                        </p>
+                    </div>
+                     <div className="p-3 rounded-lg border bg-card text-center">
+                        <div className="flex items-center gap-2 text-sm justify-center">
+                            <div className={cn("w-2 h-2 rounded-full", !performanceData.shortTermPositive ? 'bg-green-500' : 'bg-red-500')}></div>
+                            <span>Long Term</span>
+                        </div>
+                        <p className={cn("font-bold", !performanceData.shortTermPositive ? 'text-green-600' : 'text-red-600')}>
+                             {!performanceData.shortTermPositive ? 'Positive' : 'Negative'}
+                        </p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Market Cap</p>
+                        <p className="font-semibold">{performanceData.marketCap}</p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-sm text-muted-foreground">1 year Return</p>
+                        <p className={cn("font-semibold", performanceData.oneYearReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.oneYearReturn.toFixed(2)}%</p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Sector Return</p>
+                        <p className={cn("font-semibold", performanceData.sectorReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.sectorReturn.toFixed(2)}%</p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Market Return</p>
+                        <p className={cn("font-semibold", performanceData.marketReturn > 0 ? 'text-green-600' : 'text-red-600')}>{performanceData.marketReturn.toFixed(2)}%</p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardContent className="p-0 flex">
+                    <div className="w-1/3 p-4 border-r space-y-4">
+                        <div>
+                            <p className="text-sm font-semibold">Quality</p>
+                            <ScorePill label={performanceData.quality.label} score={performanceData.quality.score} colorClass={performanceData.quality.color} />
+                        </div>
+                        <div>
+                            <p className="text-sm font-semibold">Valuation</p>
+                             <ScorePill label={performanceData.valuation.label} score={performanceData.valuation.score} colorClass={performanceData.valuation.color} />
+                        </div>
+                         <div>
+                            <p className="text-sm font-semibold">Financial</p>
+                            <ScorePill label={performanceData.financial.label} score={performanceData.financial.score} colorClass={performanceData.financial.color} />
+                        </div>
+                    </div>
+                    <div className="w-2/3 p-4">
+                        <div className="grid grid-cols-3 gap-4">
+                           <div className="text-center">
+                                <div className="flex items-center justify-center gap-2 text-sm">
+                                    <div className={cn("w-2 h-2 rounded-full", performanceData.capitalStructure.dot)}></div>
+                                    <span>Capital Structure</span>
+                                </div>
+                                <p className={cn("font-bold", performanceData.capitalStructure.color)}>{performanceData.capitalStructure.label}</p>
+                            </div>
+                             <div className="text-center">
+                                <div className="flex items-center justify-center gap-2 text-sm">
+                                    <div className={cn("w-2 h-2 rounded-full", performanceData.growth.dot)}></div>
+                                    <span>Growth</span>
+                                </div>
+                                <p className={cn("font-bold", performanceData.growth.color)}>{performanceData.growth.label}</p>
+                            </div>
+                             <div className="text-center">
+                                <div className="flex items-center justify-center gap-2 text-sm">
+                                    <div className={cn("w-2 h-2 rounded-full", performanceData.managementRisk.dot)}></div>
+                                    <span>Management Risk</span>
+                                </div>
+                                <p className={cn("font-bold", performanceData.managementRisk.color)}>{performanceData.managementRisk.label}</p>
+                            </div>
+                        </div>
+                        <Separator className="my-4" />
+                        <div>
+                            <h4 className="font-semibold text-sm">Insights to Look For</h4>
+                            <ul className="list-disc list-inside text-xs text-muted-foreground mt-2 space-y-1">
+                                <li>Average quality company basis long term financial performance.</li>
+                                <li>Size - Ranks {performanceData.sectorRank}th out of {performanceData.sectorTotal} companies in {stock.sector} sector.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
 
 const StockViewer = ({ stock }: { stock: Stock | null }) => {
     const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
@@ -146,36 +287,6 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
         setFinancials(getFinancials(stock.symbol));
       }
     }, [stock]);
-
-    const fundamentalRatios = useMemo(() => {
-        if (!stock || !financials) return null;
-        const rand = pseudoRandomGenerator(stock.symbol + 'ratios');
-        const latestYearly = financials.yearly[0];
-        const prevYearly = financials.yearly[1];
-        if (!latestYearly) return null;
-
-        const eps = latestYearly.netProfit > 0 ? (latestYearly.netProfit / (rand() * 50 + 50)) * 10 : 0.1; // simplified EPS calc
-        const peRatio = eps > 0 ? stock.price / eps : 0;
-        const pbRatio = 1.5 + rand() * 8.5; // Mock P/B between 1.5 and 10
-        
-        let growth = 0;
-        if(prevYearly && prevYearly.netProfit > 0) {
-            growth = ((latestYearly.netProfit - prevYearly.netProfit) / prevYearly.netProfit) * 100;
-        } else {
-            growth = (rand() * 20); // Mock growth
-        }
-        
-        const pegRatio = peRatio > 0 && growth > 0 ? peRatio / growth : 0;
-        const roe = 5 + rand() * 20; // Mock ROE between 5% and 25%
-
-        return {
-            pe: peRatio.toFixed(2),
-            pb: pbRatio.toFixed(2),
-            peg: pegRatio.toFixed(2),
-            roe: `${roe.toFixed(2)}%`
-        };
-    }, [stock, financials]);
-
 
     if (!stock) {
         return (
@@ -238,40 +349,7 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
                     </CardContent>
                 </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Fundamental Ratios</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                         <Tabs defaultValue="valuation" className="w-full">
-                            <TabsList>
-                                <TabsTrigger value="valuation">Valuation Ratio</TabsTrigger>
-                                <TabsTrigger value="growth">Growth</TabsTrigger>
-                                <TabsTrigger value="financial">Financial</TabsTrigger>
-                                <TabsTrigger value="dividend">Dividend</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="valuation" className="pt-4">
-                                {fundamentalRatios ? (
-                                    <div className="grid grid-cols-2 gap-y-4 gap-x-2">
-                                        <RatioTerm term="PE Ratio" value={fundamentalRatios.pe} explanation="Price-to-Earnings ratio. A high P/E can mean a stock's price is high relative to earnings (overvalued), or investors expect high growth." />
-                                        <RatioTerm term="Price to Book Value" value={fundamentalRatios.pb} explanation="Compares a company's market value to its book value. A lower P/B ratio could mean the stock is undervalued." />
-                                        <RatioTerm term="PEG Ratio" value={fundamentalRatios.peg} explanation="Price/Earnings to Growth ratio. Compares the P/E ratio to earnings growth. A ratio under 1 is often considered good." />
-                                        <RatioTerm term="ROE (Latest)" value={fundamentalRatios.roe} explanation="Return on Equity. Measures how effectively a company is using its equity to generate profits. Higher is generally better." />
-                                    </div>
-                                ) : <Skeleton className="h-24 w-full" />}
-                            </TabsContent>
-                            <TabsContent value="growth" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
-                                Growth ratios will be displayed here in a future update.
-                            </TabsContent>
-                             <TabsContent value="financial" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
-                                Financial strength ratios will be displayed here in a future update.
-                            </TabsContent>
-                             <TabsContent value="dividend" className="pt-4 text-center text-sm text-muted-foreground h-24 flex items-center justify-center">
-                                Dividend-related ratios will be displayed here in a future update.
-                            </TabsContent>
-                        </Tabs>
-                    </CardContent>
-                </Card>
+                <PerformanceOverview stock={stock} />
             </div>
             
             <TradeDialog stock={stock} isOpen={isTradeDialogOpen} onOpenChange={setTradeDialogOpen} />
