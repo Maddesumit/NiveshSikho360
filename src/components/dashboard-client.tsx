@@ -184,7 +184,10 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-bold font-headline">Performance Overview</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold font-headline">Performance Overview</h2>
+                <Link href="/academy" className="text-sm text-primary hover:underline">Learn More &rarr;</Link>
+            </div>
             <Card>
                 <CardHeader>
                     <div className="flex items-center gap-2">
@@ -340,6 +343,9 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
                 <Card>
                     <CardHeader>
                         <CardTitle>Overview</CardTitle>
+                        <CardDescription>
+                            To understand these terms, <Link href="/academy" className="text-primary hover:underline">visit the Academy</Link>.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
