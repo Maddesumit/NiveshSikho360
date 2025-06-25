@@ -15,7 +15,7 @@ import {
   CardDescription
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { AreaChart, Area, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, YAxis, XAxis, CartesianGrid, Brush, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "./ui/chart";
 import { Skeleton } from "./ui/skeleton";
 import TradeDialog from "./trade-dialog";
@@ -413,15 +413,34 @@ const PerformanceOverview = ({ stock }: { stock: Stock }) => {
     )
 }
 
+type TimeRange = '1M' | '6M' | '1Y' | '5Y';
+
 const StockViewer = ({ stock }: { stock: Stock | null }) => {
     const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
     const [financials, setFinancials] = useState<FinancialData | null>(null);
+    const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
 
     useEffect(() => {
       if (stock) {
         setFinancials(getFinancials(stock.symbol));
       }
     }, [stock]);
+
+    const chartData = useMemo(() => {
+        if (!stock) return [];
+        const history = stock.history;
+        switch (timeRange) {
+            case '1M':
+                return history.slice(-22); // Approx 1 month of trading days
+            case '6M':
+                return history.slice(-132); // Approx 6 months
+            case '1Y':
+                return history.slice(-252); // Approx 1 year
+            case '5Y':
+            default:
+                return history;
+        }
+    }, [stock, timeRange]);
 
     if (!stock) {
         return (
@@ -446,22 +465,34 @@ const StockViewer = ({ stock }: { stock: Stock | null }) => {
             </div>
             
             <div className="flex-1 flex flex-col overflow-y-auto">
-                <div className="p-3 h-60 md:h-80 shrink-0">
-                     <ChartContainer config={chartConfig} className="h-full w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={stock.history} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
-                                    </linearGradient>
-                                </defs>
-                                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
-                                <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
-                                <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                     </ChartContainer>
+                <div className="p-3 shrink-0">
+                    <div className="flex items-center justify-end gap-2 mb-2">
+                        {(['1M', '6M', '1Y', '5Y'] as TimeRange[]).map(range => (
+                            <Button key={range} variant={timeRange === range ? 'secondary' : 'ghost'} size="sm" onClick={() => setTimeRange(range)}>
+                                {range}
+                            </Button>
+                        ))}
+                    </div>
+                     <div className="h-60 md:h-80">
+                        <ChartContainer config={chartConfig} className="h-full w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id={`fill-${stock.symbol}`} x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor={chartColor} stopOpacity={0.1} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                                    <XAxis dataKey="date" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                                    <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} domain={['dataMin - 10', 'dataMax + 10']} tickFormatter={(val) => `₹${val}`} />
+                                    <RechartsTooltip content={<ChartTooltipContent indicator="line" formatter={(value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value as number)}/>} />
+                                    <Brush dataKey="date" height={20} stroke={chartColor} />
+                                    <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill={`url(#fill-${stock.symbol})`} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                     </div>
                 </div>
 
                 <div className="p-3 space-y-4">
@@ -530,4 +561,3 @@ export default function DashboardClient() {
         </div>
     );
 }
-
