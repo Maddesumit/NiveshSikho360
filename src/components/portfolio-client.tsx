@@ -29,6 +29,8 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 import type { Holding } from "@/hooks/use-trade-store";
 import type { Stock } from "@/data/stocks";
+import { Button } from "./ui/button";
+import TradeDialog from "./trade-dialog";
 
 
 const COLORS = ['#3B82F6', '#A78BFA', '#2DD4BF', '#FBBF24', '#F87171'];
@@ -61,6 +63,13 @@ const PnlText = ({ value, percent, className } : { value: number, percent: numbe
 export default function PortfolioClient() {
   const { state, getStock } = useNiveshStore();
   const { holdings } = state;
+  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [isTradeDialogOpen, setTradeDialogOpen] = useState(false);
+
+  const handleTradeClick = (stock: Stock) => {
+    setSelectedStock(stock);
+    setTradeDialogOpen(true);
+  };
 
   const portfolioMetrics = useMemo(() => {
     const totalInvested = holdings.reduce(
@@ -105,102 +114,111 @@ export default function PortfolioClient() {
   }, [holdings, getStock]);
 
   return (
-    <div className="flex-1 space-y-4">
-      <h1 className="text-3xl font-bold tracking-tight font-headline">
-        My Portfolio
-      </h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Invested Amount</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormattedCurrency value={portfolioMetrics.totalInvested} className="text-2xl font-bold" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormattedCurrency value={portfolioMetrics.currentValue} className="text-2xl font-bold" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Overall P/L</CardTitle>
-          </CardHeader>
-          <CardContent>
-             <PnlText value={portfolioMetrics.totalPandL} percent={portfolioMetrics.totalPandLPercent} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Today's P/L</CardTitle>
-          </CardHeader>
-          <CardContent>
-             <PnlText value={portfolioMetrics.todaysPnl} percent={portfolioMetrics.todaysPnlPercent} />
-          </CardContent>
-        </Card>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="lg:col-span-4">
-          <CardHeader>
-            <CardTitle>Holdings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <HoldingsTable holdings={holdings} getStock={getStock} />
-          </CardContent>
-        </Card>
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>Asset Allocation</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px] w-full">
-            {allocationData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={allocationData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    nameKey="name"
-                  >
-                    {allocationData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number) =>
-                      new Intl.NumberFormat("en-IN", {
-                        style: "currency",
-                        currency: "INR",
-                      }).format(value)
-                    }
-                  />
-                  <Legend />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-            ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
-                    <p>No assets to display. Start trading!</p>
-                </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <>
+        <div className="flex-1 space-y-4">
+        <h1 className="text-3xl font-bold tracking-tight font-headline">
+            My Portfolio
+        </h1>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+            <CardHeader>
+                <CardTitle>Invested Amount</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <FormattedCurrency value={portfolioMetrics.totalInvested} className="text-2xl font-bold" />
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader>
+                <CardTitle>Current Value</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <FormattedCurrency value={portfolioMetrics.currentValue} className="text-2xl font-bold" />
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader>
+                <CardTitle>Overall P/L</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <PnlText value={portfolioMetrics.totalPandL} percent={portfolioMetrics.totalPandLPercent} />
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader>
+                <CardTitle>Today's P/L</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <PnlText value={portfolioMetrics.todaysPnl} percent={portfolioMetrics.todaysPnlPercent} />
+            </CardContent>
+            </Card>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="lg:col-span-4">
+            <CardHeader>
+                <CardTitle>Holdings</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <HoldingsTable holdings={holdings} getStock={getStock} onTrade={handleTradeClick} />
+            </CardContent>
+            </Card>
+            <Card className="lg:col-span-3">
+            <CardHeader>
+                <CardTitle>Asset Allocation</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[300px] w-full">
+                {allocationData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                    <RechartsPieChart>
+                    <Pie
+                        data={allocationData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                        nameKey="name"
+                    >
+                        {allocationData.map((entry, index) => (
+                        <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                        />
+                        ))}
+                    </Pie>
+                    <Tooltip
+                        formatter={(value: number) =>
+                        new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                        }).format(value)
+                        }
+                    />
+                    <Legend />
+                    </RechartsPieChart>
+                </ResponsiveContainer>
+                ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                        <p>No assets to display. Start trading!</p>
+                    </div>
+                )}
+            </CardContent>
+            </Card>
+        </div>
+        </div>
+        {selectedStock && (
+            <TradeDialog
+                stock={selectedStock}
+                isOpen={isTradeDialogOpen}
+                onOpenChange={setTradeDialogOpen}
+            />
+        )}
+    </>
   );
 }
 
-function HoldingsTable({ holdings, getStock }: { holdings: Holding[], getStock: (symbol: string) => Stock | undefined }) {
+function HoldingsTable({ holdings, getStock, onTrade }: { holdings: Holding[], getStock: (symbol: string) => Stock | undefined, onTrade: (stock: Stock) => void }) {
     if (holdings.length === 0) {
         return <div className="text-center py-8 text-muted-foreground">You don't have any holdings yet.</div>;
     }
@@ -214,6 +232,7 @@ function HoldingsTable({ holdings, getStock }: { holdings: Holding[], getStock: 
           <TableHead>Avg. Price</TableHead>
           <TableHead>Current Price</TableHead>
           <TableHead className="text-right">P/L</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -255,6 +274,18 @@ function HoldingsTable({ holdings, getStock }: { holdings: Holding[], getStock: 
                   }).format(pAndL)}
                 </div>
                 <div className="text-sm">({pAndLPercent.toFixed(2)}%)</div>
+              </TableCell>
+              <TableCell className="text-right">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                        const stockToTrade = getStock(h.stock.symbol);
+                        if (stockToTrade) onTrade(stockToTrade);
+                    }}
+                >
+                    Trade
+                </Button>
               </TableCell>
             </TableRow>
           );
