@@ -34,8 +34,8 @@ export const pseudoRandomGenerator = (seedStr: string) => {
 const generateHistory = (symbol: string, basePrice: number) => {
   const rand = pseudoRandomGenerator(symbol);
   const history = [];
-  // Use a fixed end date to avoid hydration issues with new Date()
-  const endDate = new Date('2024-07-26T12:00:00Z');
+  // Use the current date as the end date for up-to-date charts.
+  const endDate = new Date();
   const daysToGenerate = 5 * 365;
 
   let price = basePrice;
