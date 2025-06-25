@@ -5,8 +5,8 @@ import React, { createContext, useContext, useReducer, ReactNode, useCallback, u
 import type { Stock } from "@/data/stocks";
 import { getStocks, getStockBySymbol, pseudoRandomGenerator } from "@/data/stocks";
 import { useAuth } from "./use-auth";
-import mongoose, { Schema, model, models } from 'mongoose';
-import connectDB from "@/lib/mongodb";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 // The state used within the application, with full Stock objects for convenience
 type Holding = {
@@ -22,7 +22,7 @@ type NiveshState = {
   courseCompleted: boolean;
 };
 
-// The format of data as it is stored in MongoDB
+// The format of data as it is stored in Firestore
 type StoredHolding = {
   stockSymbol: string;
   quantity: number;
@@ -50,23 +50,6 @@ const initialState: NiveshState = {
   completedModules: [],
   courseCompleted: false,
 };
-
-// Mongoose Schema Definitions
-const HoldingSchema = new Schema<StoredHolding>({
-  stockSymbol: { type: String, required: true },
-  quantity: { type: Number, required: true },
-  avgPrice: { type: Number, required: true },
-});
-
-const UserPortfolioSchema = new Schema<StoredNiveshState>({
-  userId: { type: String, required: true, unique: true, index: true },
-  cash: { type: Number, required: true, default: 100000 },
-  holdings: [HoldingSchema],
-  completedModules: [String],
-  courseCompleted: { type: Boolean, default: false },
-}, { timestamps: true });
-
-const UserPortfolio = models.UserPortfolio || model<StoredNiveshState>('UserPortfolio', UserPortfolioSchema);
 
 
 const niveshReducer = (state: NiveshState, action: Action): NiveshState => {
@@ -194,9 +177,12 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
     setPriceGenerators(allStocks.map(stock => pseudoRandomGenerator(stock.symbol + 'pricefeed')));
   }, []);
 
-  // Effect to load data from MongoDB
+  // Effect to load data from Firestore
   useEffect(() => {
-    if (authLoading || !process.env.MONGODB_URI) return;
+    if (authLoading || !db) {
+        if(!db && !authLoading) setIsDataLoaded(true);
+        return;
+    };
 
     const loadData = async () => {
       if (!user) {
@@ -204,26 +190,26 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
         setIsDataLoaded(true);
         return;
       }
-
+      
+      const docRef = doc(db, "userPortfolios", user.uid);
       try {
-        await connectDB();
-        const dbState = await UserPortfolio.findOne({ userId: user.uid });
+        const docSnap = await getDoc(docRef);
 
-        if (dbState) {
+        if (docSnap.exists()) {
+          const dbState = docSnap.data() as StoredNiveshState;
           const holdings = (dbState.holdings || []).map(h => {
               const stock = getStockBySymbol(h.stockSymbol);
               return stock ? { ...h, stock } : null
           }).filter((h): h is Holding => h !== null);
-
-          dispatch({ type: "SET_STATE_FROM_DB", payload: { ...dbState.toObject(), holdings } });
+          
+          dispatch({ type: "SET_STATE_FROM_DB", payload: { ...dbState, holdings } });
         } else {
           // New user, set initial state in DB
-          const newUserPortfolio = new UserPortfolio({ ...initialState, userId: user.uid });
-          await newUserPortfolio.save();
+          await setDoc(docRef, { ...initialState, userId: user.uid });
           dispatch({ type: "SET_STATE_FROM_DB", payload: initialState });
         }
       } catch (error) {
-        console.error("Failed to load user data from MongoDB:", error);
+        console.error("Failed to load user data from Firestore:", error);
       } finally {
         setIsDataLoaded(true);
       }
@@ -232,11 +218,11 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
     loadData();
   }, [user, authLoading]);
 
-  // Effect to save state changes to MongoDB
+  // Effect to save state changes to Firestore
   useEffect(() => {
     // Debounce saving to avoid too many writes
     const handler = setTimeout(async () => {
-      if (!authLoading && user && isDataLoaded && state !== initialState && process.env.MONGODB_URI) {
+      if (!authLoading && user && isDataLoaded && state !== initialState && db) {
         const stateToStore = {
           ...state,
           userId: user.uid,
@@ -247,10 +233,10 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
           }))
         };
         try {
-          await connectDB();
-          await UserPortfolio.findOneAndUpdate({ userId: user.uid }, stateToStore, { upsert: true });
+            const docRef = doc(db, "userPortfolios", user.uid);
+            await setDoc(docRef, stateToStore, { merge: true });
         } catch (error) {
-          console.error("Failed to save user data to MongoDB:", error);
+          console.error("Failed to save user data to Firestore:", error);
         }
       }
     }, 1000); // Save 1 second after the last change
