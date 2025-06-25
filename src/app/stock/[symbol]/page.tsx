@@ -12,7 +12,7 @@ type StockDetailPageProps = {
   };
 };
 
-export default function StockDetailPage({ params }: StockDetailPageProps) {
+export default async function StockDetailPage({ params }: StockDetailPageProps) {
   const symbol = params.symbol.toUpperCase();
   const stock = getStockBySymbol(symbol);
 

@@ -178,7 +178,12 @@ export const NiveshProvider = ({ children }: { children: ReactNode }) => {
   // Effect to load data from Firestore
   useEffect(() => {
     if (authLoading) return;
-    if (!db) return;
+
+    if (!db) {
+      console.error("Firestore is not configured. Data will not be loaded or saved.");
+      setIsDataLoaded(true); // Allow app to function without persistence
+      return;
+    }
 
     let unsubscribe: Unsubscribe | undefined;
 

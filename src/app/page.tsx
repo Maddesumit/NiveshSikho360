@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 
@@ -70,6 +70,11 @@ const futurePlans: { title: string; description: string; icon: LucideIcon }[] = 
 const LandingPage = () => {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const [year, setYear] = useState<number>();
+
+    useEffect(() => {
+        setYear(new Date().getFullYear());
+    }, []);
 
     useEffect(() => {
         if (!loading && user) {
@@ -99,7 +104,7 @@ const LandingPage = () => {
 
       <main className="flex-grow">
         <section className="relative py-20 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 -z-20 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
+          <div className="absolute inset-0 -z-20 h-full w-full bg-background bg-grid"></div>
           <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[80%] h-[60%] rounded-full bg-primary/10 blur-[100px] -z-10"></div>
 
           <div className="container mx-auto px-4 max-w-screen-xl">
@@ -293,7 +298,7 @@ const LandingPage = () => {
                  <div className="flex items-center gap-4">
                     {/* Add footer links if needed */}
                  </div>
-                <p>© {new Date().getFullYear()} NiveshSikho360. All rights reserved.</p>
+                <p>© {year} NiveshSikho360. All rights reserved.</p>
             </div>
             <Separator className="my-6" />
             <div className="text-center text-xs space-y-2">
