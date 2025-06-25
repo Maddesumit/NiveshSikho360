@@ -5,58 +5,47 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarFooter,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import {
   LayoutDashboard,
   PieChart,
-  Wallet,
-  Github,
-  Newspaper,
+  Store,
   BookOpen,
   HelpCircle,
-  Rocket,
   Loader,
-  Store,
+  Github,
 } from "lucide-react";
 import { NiveshSikho360Icon } from "@/components/icons";
 import { useAuth } from "@/hooks/use-auth";
 import { UserNav } from "./user-nav";
-import { Skeleton } from "./ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [open, setOpen] = React.useState(false);
 
   const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup' || pathname === '/future-plans';
 
   useEffect(() => {
     if (loading) return;
 
-    // If user is logged in and tries to access a public page, redirect to dashboard
     if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/')) {
       router.push('/dashboard');
     }
 
-    // If user is not logged in and tries to access a protected page, redirect to login
     if (!user && !isPublicPage) {
       router.push('/login');
     }
   }, [user, loading, router, pathname, isPublicPage]);
 
   const navItems = [
-    { href: "/dashboard", label: "Watchlist", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/markets", label: "Markets", icon: Store },
     { href: "/portfolio", label: "Portfolio", icon: PieChart },
     { href: "/academy", label: "Academy", icon: BookOpen },
@@ -75,50 +64,75 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
      );
   }
 
+  const NavContent = ({isMobile = false}: {isMobile?: boolean}) => (
+    <nav className={cn(
+        "flex items-center text-sm font-medium",
+        isMobile ? "flex-col space-y-4 items-start" : "space-x-6"
+    )}>
+      {navItems.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={() => isMobile && setOpen(false)}
+          className={cn(
+            "transition-colors hover:text-foreground/80",
+            pathname.startsWith(item.href) ? "text-foreground" : "text-foreground/60",
+            isMobile && "text-lg"
+          )}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </nav>
+  );
+
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <NiveshSikho360Icon className="w-8 h-8 text-primary" />
-            <span className="font-headline font-semibold text-xl text-primary">
-              NiveshSikho360
-            </span>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <Link href={item.href}>
-                  <SidebarMenuButton
-                    isActive={pathname.startsWith(item.href)}
-                    tooltip={item.label}
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-           <a href="https://github.com/FirebaseExtended/ai-apps-collection-node" target="_blank" rel="noopener noreferrer">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-                <Github />
-                View on Github
-            </Button>
-           </a>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex items-center justify-between p-4 border-b bg-card">
-          <SidebarTrigger />
-          <UserNav />
-        </header>
-        <main className="flex-1 bg-background">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+     <div className="flex min-h-screen w-full flex-col">
+      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 z-50">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 text-lg font-semibold"
+        >
+          <NiveshSikho360Icon className="h-6 w-6" />
+          <span className="sr-only">NiveshSikho360</span>
+        </Link>
+        
+        <div className="hidden md:flex md:flex-1 md:items-center md:gap-5 lg:gap-6">
+            <div className="flex-1">
+                <NavContent />
+            </div>
+        </div>
+
+        <div className="flex w-full items-center gap-4 md:ml-auto md:flex-1 md:justify-end">
+             <a href="https://github.com/FirebaseExtended/ai-apps-collection-node" target="_blank" rel="noopener noreferrer" className="hidden md:block">
+                <Button variant="ghost" size="icon">
+                    <Github className="h-5 w-5" />
+                    <span className="sr-only">GitHub</span>
+                </Button>
+            </a>
+           <UserNav />
+           <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0 md:hidden"
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <div className="flex flex-col gap-6 pt-6">
+                    <NavContent isMobile={true} />
+                </div>
+              </SheetContent>
+            </Sheet>
+        </div>
+      </header>
+      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        {children}
+      </main>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
@@ -26,6 +27,9 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
+import type { Holding } from "@/hooks/use-trade-store";
+import type { Stock } from "@/data/stocks";
+
 
 const COLORS = ['#3B82F6', '#A78BFA', '#2DD4BF', '#FBBF24', '#F87171'];
 
@@ -40,56 +44,83 @@ const FormattedCurrency = ({ value, className }: { value: number; className?: st
   return <p className={className}>{new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value)}</p>
 }
 
+const PnlText = ({ value, percent, className } : { value: number, percent: number, className?: string}) => {
+    const isPositive = value >= 0;
+    return (
+        <p className={cn(
+            "text-2xl font-bold",
+            isPositive ? "text-green-600" : "text-red-600",
+            className
+        )}>
+            {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value)}
+            <span className="text-sm ml-2">({percent.toFixed(2)}%)</span>
+        </p>
+    );
+}
+
 export default function PortfolioClient() {
-  const { state, getStockPrice } = useNiveshStore();
-  const { holdings, cash } = state;
+  const { state, getStock } = useNiveshStore();
+  const { holdings } = state;
 
   const portfolioMetrics = useMemo(() => {
     const totalInvested = holdings.reduce(
       (acc, h) => acc + h.avgPrice * h.quantity,
       0
     );
-    const currentValue = holdings.reduce(
-      (acc, h) => acc + getStockPrice(h.stock.symbol) * h.quantity,
-      0
+
+    const { currentValue, todaysPnl } = holdings.reduce(
+      (acc, h) => {
+        const liveStock = getStock(h.stock.symbol);
+        const price = liveStock?.price ?? h.stock.price;
+        const change = liveStock?.change ?? 0;
+        acc.currentValue += price * h.quantity;
+        acc.todaysPnl += change * h.quantity;
+        return acc;
+      },
+      { currentValue: 0, todaysPnl: 0 }
     );
+
     const totalPandL = currentValue - totalInvested;
     const totalPandLPercent =
       totalInvested > 0 ? (totalPandL / totalInvested) * 100 : 0;
-    const portfolioValue = currentValue + cash;
+    
+    const openingValue = currentValue - todaysPnl;
+    const todaysPnlPercent = openingValue > 0 ? (todaysPnl / openingValue) * 100 : 0;
 
     return {
+      totalInvested,
       currentValue,
       totalPandL,
       totalPandLPercent,
-      portfolioValue,
+      todaysPnl,
+      todaysPnlPercent
     };
-  }, [holdings, cash, getStockPrice]);
+  }, [holdings, getStock]);
 
   const allocationData = useMemo(() => {
     return holdings.map((h) => ({
       name: h.stock.symbol,
-      value: getStockPrice(h.stock.symbol) * h.quantity,
+      value: (getStock(h.stock.symbol)?.price ?? h.stock.price) * h.quantity,
     }));
-  }, [holdings, getStockPrice]);
+  }, [holdings, getStock]);
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-4">
       <h1 className="text-3xl font-bold tracking-tight font-headline">
         My Portfolio
       </h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader>
-            <CardTitle>Portfolio Value</CardTitle>
+            <CardTitle>Invested Amount</CardTitle>
           </CardHeader>
           <CardContent>
-            <FormattedCurrency value={portfolioMetrics.portfolioValue} className="text-2xl font-bold" />
+            <FormattedCurrency value={portfolioMetrics.totalInvested} className="text-2xl font-bold" />
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Holdings Value</CardTitle>
+            <CardTitle>Current Value</CardTitle>
           </CardHeader>
           <CardContent>
             <FormattedCurrency value={portfolioMetrics.currentValue} className="text-2xl font-bold" />
@@ -97,29 +128,18 @@ export default function PortfolioClient() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Total P/L</CardTitle>
+            <CardTitle>Overall P/L</CardTitle>
           </CardHeader>
           <CardContent>
-             <p
-              className={cn("text-2xl font-bold", {
-                "text-green-600": portfolioMetrics.totalPandL >= 0,
-                "text-red-600": portfolioMetrics.totalPandL < 0,
-              })}
-            >
-              {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-              }).format(portfolioMetrics.totalPandL)}{" "}
-              ({portfolioMetrics.totalPandLPercent.toFixed(2)}%)
-            </p>
+             <PnlText value={portfolioMetrics.totalPandL} percent={portfolioMetrics.totalPandLPercent} />
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Available Cash</CardTitle>
+            <CardTitle>Today's P/L</CardTitle>
           </CardHeader>
           <CardContent>
-             <FormattedCurrency value={cash} className="text-2xl font-bold" />
+             <PnlText value={portfolioMetrics.todaysPnl} percent={portfolioMetrics.todaysPnlPercent} />
           </CardContent>
         </Card>
       </div>
@@ -129,7 +149,7 @@ export default function PortfolioClient() {
             <CardTitle>Holdings</CardTitle>
           </CardHeader>
           <CardContent>
-            <HoldingsTable holdings={holdings} getStockPrice={getStockPrice} />
+            <HoldingsTable holdings={holdings} getStock={getStock} />
           </CardContent>
         </Card>
         <Card className="lg:col-span-3">
@@ -180,7 +200,7 @@ export default function PortfolioClient() {
   );
 }
 
-function HoldingsTable({ holdings, getStockPrice }: any) {
+function HoldingsTable({ holdings, getStock }: { holdings: Holding[], getStock: (symbol: string) => Stock | undefined }) {
     if (holdings.length === 0) {
         return <div className="text-center py-8 text-muted-foreground">You don't have any holdings yet.</div>;
     }
@@ -197,10 +217,12 @@ function HoldingsTable({ holdings, getStockPrice }: any) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {holdings.map((h: any) => {
-          const currentPrice = getStockPrice(h.stock.symbol);
+        {holdings.map((h: Holding) => {
+          const liveStock = getStock(h.stock.symbol);
+          const currentPrice = liveStock?.price ?? h.stock.price;
           const pAndL = (currentPrice - h.avgPrice) * h.quantity;
-          const pAndLPercent = (pAndL / (h.avgPrice * h.quantity)) * 100;
+          const investedValue = h.avgPrice * h.quantity;
+          const pAndLPercent = investedValue > 0 ? (pAndL / investedValue) * 100 : 0;
           return (
             <TableRow key={h.stock.symbol}>
               <TableCell>
